@@ -76,6 +76,42 @@ layout: header
             padding: 10px;
             text-align: center;
         }
+
+        .search{
+            position: center;
+            text-align: center;
+            padding:10px
+        }
+
+        .search input {
+            height: 40px;
+            width: 50%;
+            font-family: Verdana;
+            font-size:30px;
+            border-radius:15px;
+            
+       }
+        .sbutton{
+            color: black;
+            border: 1px solid #FFFFED;
+            background: linear-gradient(#FFFFED, #ffffede8);
+            border-radius: 2px;
+            box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0px 3px 7px rgba(0, 0, 0, 0.7);
+            background-color: #FFFFED;
+            padding: 10px 10px;
+            line-height: 14px;
+            font-size: 14px;
+            text-align: center;
+            text-decoration: none;
+            
+        }
+        .sbutton:hover {
+            background: linear-gradient(#cc8080, #d35c5c);
+            color: black;
+        }
+        .searchimg{
+            height: 20px;
+        }
     </style>
 </head>
 <body>
@@ -83,6 +119,11 @@ layout: header
     <header>
         <h1>Basketball Player Stats</h1>
     </header>
+
+    <div class="search">
+        <input id="searchbar"type="text" placeholder="Search: Ex. Lebron James">
+        <button class="sbutton" id="searchbutton"><img src="https://cdn-icons-png.flaticon.com/512/149/149852.png" class="searchimg"></button>
+      </div>
 
     <section>
         <h2>Player Information</h2>
