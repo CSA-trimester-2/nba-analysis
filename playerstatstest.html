@@ -50,7 +50,7 @@ layout: header
 
     <script>
         function fetchData() {
-            fetch('http://localhost:8085/api/getPlayerStats') // Replace with your backend endpoint
+            fetch('http://localhost:8085/api/nba/players') // Replace with your backend endpoint
                 .then(response => response.json())
                 .then(data => {
                     displayTeams(data.data);
@@ -85,4 +85,3 @@ layout: header
     </script>
 
 </body>
-</html>
