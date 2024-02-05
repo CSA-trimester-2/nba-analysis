@@ -48,9 +48,14 @@
     padding-left: 210px;
   }
 
-  #header nav ul.left-links li {
-    margin-right: 100px; /* Adjust margin to add spacing between left links */
-  }
+        /* Style the navigation list */
+        nav ul {
+            list-style: none;
+            padding: 2px;
+            margin: 0;
+            display: flex; /* Display the list items in a flex container */
+            justify-content: space-between; /* Spread list items horizontally */
+        }
 
   #header nav ul.right-links {
     justify-content: flex-end; /* Align right links to the end */
@@ -61,64 +66,10 @@
     margin: 0;
   }
 
-  #header nav ul li a {
-    color: black;
-    border: 1px solid #FFFFED;
-    background: linear-gradient(#FFFFED, #ffffede8);
-    border-radius: 2px;
-    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0px 3px 7px rgba(0, 0, 0, 0.7);
-    background-color: #FFFFED;
-    padding: 10px 12px;
-    line-height: 14px;
-    font-size: 14px;
-    text-align: center;
-    text-decoration: none;
-  }
-
-  #header nav ul li a:hover {
-    background: linear-gradient(#cc8080, #d35c5c);
-    color: black;
-  }
-
-  #header .floating-image {
-    position: absolute;
-    top: 40%;
-    left: 100px;
-    transform: translate(0, -50%);
-    max-width: 50%;
-    max-height: 75%;
-    animation: float 2s infinite alternate;
-  }
-
-  .sign-in-button {
-    margin-right: 20px; /* Adjust margin as needed */
-  }
-
-  .sign-in-button a {
-    color: black;
-    border: 1px solid #FFFFED;
-    background: linear-gradient(#FFFFED, #ffffede8);
-    border-radius: 2px;
-    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0px 3px 7px rgba(0, 0, 0, 0.7);
-    background-color: #FFFFED;
-    padding: 10px 12px;
-    line-height: 14px;
-    font-size: 14px;
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .sign-in-button a:hover {
-    background: linear-gradient(#cc8080, #d35c5c);
-    color: black;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translate(0, -25%);
-    }
-    100% {
-      transform: translate(0, -40%);
-    }
-  }
-</style>
+        /* Style the links on hover */
+        nav a:hover {
+            color: #3498DB; /* Light Blue */
+        }
+    </style>
+</head>
+</html>
