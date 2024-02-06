@@ -2,7 +2,6 @@
 layout: header
 ---
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +10,7 @@ layout: header
         /* Add your styles here */
     </style>
 </head>
+
 <body>
     <h1>NBA Player Search</h1>
 
@@ -21,14 +21,14 @@ layout: header
     </form>
 
     <div id="playerInfo">
-        <!-- Display player information here -->
+        <!-- Display player information and statistics here -->
     </div>
 
     <script>
         function searchPlayer() {
             var playerId = document.getElementById("playerId").value;
 
-            // Assuming your backend is running on localhost:8080
+            // Assuming your backend is running on localhost:8062
             fetch(`http://localhost:8062/api/nba/players/${playerId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -53,17 +53,30 @@ layout: header
                 var weight = playerInfo.weight_pounds || 'N/A';
                 var teamName = playerInfo.team ? playerInfo.team.full_name : 'Unknown Team';
 
-                // Display player information
-                var playerHtml = `
-                    <p>Name: ${playerName}</p>
-                    <p>Position: ${position}</p>
-                    <p>Height: ${height}</p>
-                    <p>Weight: ${weight} lbs</p>
-                    <p>Team: ${teamName}</p>
-                    <!-- Add more fields as needed -->
+                // Extract player statistics
+                var stats = playerInfo.stats || {};
+                var tableHtml = `
+                    <table border="1">
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Height</th>
+                            <th>Weight</th>
+                            <th>Team</th>
+                        </tr>
+                        <tr>
+                            <td>${playerName}</td>
+                            <td>${position}</td>
+                            <td>${height}</td>
+                            <td>${weight} lbs</td>
+                            <td>${teamName}</td>
+                        </tr>
+                    </table>
                 `;
-                document.getElementById("playerInfo").innerHTML = playerHtml;
+                document.getElementById("playerInfo").innerHTML = tableHtml;
             }
         }
     </script>
 </body>
+
+</html>
