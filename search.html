@@ -1,12 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GitHub User Search</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Player Search</title>
+    <style>
+        /* Add your styles here */
+    </style>
 </head>
 <body>
-    <form action="/searchGitHubUser" method="post">
-        <input type="text" name="githubUserName" placeholder="Enter GitHub User Name" required>
-        <button type="submit">Search</button>
+    <h1>NBA Player Search</h1>
+
+    <form id="searchForm">
+        <label for="playerId">Enter Player ID:</label>
+        <input type="text" id="playerId" name="playerId" required>
+        <button type="button" onclick="searchPlayer()">Search</button>
     </form>
+
+    <div id="playerInfo">
+        <!-- Display player information here -->
+    </div>
+
+    <script>
+        function searchPlayer() {
+            var playerId = document.getElementById("playerId").value;
+
+            // Assuming your backend is running on localhost:8080
+            fetch(`http://localhost:8062/api/nba/players/${playerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayPlayerInfo(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle error, e.g., display an error message to the user
+                });
+        }
+
+        function displayPlayerInfo(playerInfo) {
+            document.getElementById("playerInfo").innerHTML = '';
+
+            if (playerInfo.status) {
+                document.getElementById("playerInfo").innerHTML = `<p>Error: ${playerInfo.status}</p>`;
+            } else {
+                // Extract relevant information from the provided structure
+                var playerName = `${playerInfo.first_name} ${playerInfo.last_name}`;
+                var position = playerInfo.position || 'N/A';
+                var height = `${playerInfo.height_feet}'${playerInfo.height_inches}"` || 'N/A';
+                var weight = playerInfo.weight_pounds || 'N/A';
+                var teamName = playerInfo.team ? playerInfo.team.full_name : 'Unknown Team';
+
+                // Display player information
+                var playerHtml = `
+                    <p>Name: ${playerName}</p>
+                    <p>Position: ${position}</p>
+                    <p>Height: ${height}</p>
+                    <p>Weight: ${weight} lbs</p>
+                    <p>Team: ${teamName}</p>
+                    <!-- Add more fields as needed -->
+                `;
+                document.getElementById("playerInfo").innerHTML = playerHtml;
+            }
+        }
+    </script>
 </body>
 </html>
