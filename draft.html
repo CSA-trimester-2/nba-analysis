@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Basketball Player Draft</title>
     <style>
+        /* Styles from the original HTML */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -72,7 +73,7 @@
 <h1>Basketball Player Draft</h1>
 
 <div class="container">
-    <div class="side">
+    <div class="side" id="sideA">
         <h2>Side A</h2>
         <div class="slots">
             <div class="slot" id="pg1Slot">Point Guard 1</div>
@@ -93,7 +94,7 @@
 
     <div id="playerContainer"></div>
 
-    <div class="side">
+    <div class="side" id="sideB">
         <h2>Side B</h2>
         <div class="slots">
             <div class="slot" id="pg2Slot">Point Guard 2</div>
@@ -113,59 +114,62 @@
     </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    // Sample player data (replace with actual player data)
-    const players = [
-        { name: 'LeBron James', position: 'Small Forward' },
-        { name: 'Stephen Curry', position: 'Point Guard' },
-        { name: 'Kevin Durant', position: 'Power Forward' },
-        { name: 'Kawhi Leonard', position: 'Small Forward' },
-        { name: 'James Harden', position: 'Shooting Guard' },
-        { name: 'Giannis Antetokounmpo', position: 'Power Forward' },
-        { name: 'Anthony Davis', position: 'Center' },
-        { name: 'Luka Dončić', position: 'Point Guard' },
-        { name: 'Damian Lillard', position: 'Point Guard' },
-        { name: 'Joel Embiid', position: 'Center' }
-        // Add more players as needed
-    ];
+    $(document).ready(function() {
+        // Variable to track the current side drafting
+        let currentSide = 'A';
 
-    // Variable to track the side currently drafting (Side A or Side B)
-    let currentSide = 'A';
+        // Function to handle player draft
+        function draftPlayer(playerName, position) {
+            const draftSide = currentSide === 'A' ? 'B' : 'A'; // Determine the opposite side
+            const slots = $(`#${currentSide.toLowerCase()} .slot`);
+            const benchSlots = $(`#${currentSide.toLowerCase()} .slot.bench`);
 
-    // Function to render player cards
-    function renderPlayers() {
-        const container = document.getElementById('playerContainer');
-        container.innerHTML = '';
+            // Check if there are any empty starting positions
+            const emptyPosition = slots.toArray().find(slot => $(slot).text().trim() === '');
+            if (emptyPosition) {
+                $(emptyPosition).text(playerName); // Draft the player to the empty starting position
+            } else {
+                // If all starting positions are filled, draft the player to the first available bench slot
+                const emptyBenchSlot = benchSlots.toArray().find(slot => $(slot).text().trim() === '');
+                if (emptyBenchSlot) {
+                    $(emptyBenchSlot).text(playerName);
+                } else {
+                    alert("All positions are filled."); // If no empty bench slot is found
+                    return;
+                }
+            }
 
-        players.forEach(player => {
-            const card = document.createElement('div');
-            card.classList.add('player-card');
-            card.innerHTML = `
-                <h2>${player.name}</h2>
-                <p>Position: ${player.position}</p>
-                <button onclick="draftPlayer('${player.name}', '${player.position}')">Draft</button>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    // Function to draft a player into a slot
-    function draftPlayer(playerName, position) {
-        const draftSide = currentSide === 'A' ? 'B' : 'A'; // Determine the opposite side
-        const slotId = position.toLowerCase() + 'Slot';
-        const slot = document.getElementById(slotId);
-        if (slot.textContent.trim() === 'Bench' || slot.textContent.trim() === '') {
-            // Draft the player to the slot if it's empty or already contains a Bench placeholder
-            slot.textContent = playerName;
             currentSide = draftSide; // Update the current drafting side
-        } else {
-            // Inform the user that the slot is already filled
-            alert(`The ${position} slot for ${draftSide} is already filled.`);
         }
-    }
 
-    // Render initial players
-    renderPlayers();
+        // Fetch player data from the API
+        $.getJSON("https://www.balldontlie.io/api/v1/players", function(data) {
+            // Render player cards with data from the API
+            renderPlayers(data.data);
+        });
+
+        // Function to render player cards
+        function renderPlayers(players) {
+            const container = $("#playerContainer");
+            container.empty();
+
+            players.forEach(player => {
+                // Fetch team information for the player
+                $.getJSON(`https://www.balldontlie.io/api/v1/teams/${player.team.id}`, function(teamData) {
+                    const card = $("<div>").addClass("player-card");
+                    card.html(`
+                        <h2>${player.first_name} ${player.last_name}</h2>
+                        <p>Position: ${player.position}</p>
+                        <p>Team: ${teamData.full_name}</p>
+                        <button onclick="draftPlayer('${player.first_name} ${player.last_name}', '${player.position}')">Draft</button>
+                    `);
+                    container.append(card);
+                });
+            });
+        }
+    });
 </script>
 
 </body>
