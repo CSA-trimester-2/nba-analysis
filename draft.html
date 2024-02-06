@@ -1,4 +1,172 @@
----
-layout: header
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Player Draft</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #f0f0f0;
+        }
 
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .side {
+            width: 30%;
+        }
+
+        .player-card {
+            width: 200px; /* Adjusted width */
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 15px; /* Adjusted padding */
+            margin-bottom: 10px; /* Adjusted margin */
+        }
+
+        .player-card h2 {
+            margin-top: 0;
+        }
+
+        .player-card button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px; /* Adjusted padding */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .player-card button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .slots {
+            margin-bottom: 20px;
+        }
+
+        .slot {
+            background-color: #eee;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Basketball Player Draft</h1>
+
+<div class="container">
+    <div class="side">
+        <h2>Side A</h2>
+        <div class="slots">
+            <div class="slot" id="pg1Slot">Point Guard 1</div>
+            <div class="slot" id="pf1Slot">Power Forward 1</div>
+            <div class="slot" id="pf2Slot">Power Forward 2</div>
+            <div class="slot" id="cSlot">Center</div>
+            <div class="slot" id="sf1Slot">Small Forward 1</div>
+            <div class="slot" id="sf2Slot">Small Forward 2</div>
+            <div class="slot" id="sgSlot">Shooting Guard</div>
+            <div class="slot" id="benchASlot1">Bench</div>
+            <div class="slot" id="benchASlot2">Bench</div>
+            <div class="slot" id="benchASlot3">Bench</div>
+            <div class="slot" id="benchASlot4">Bench</div>
+            <div class="slot" id="benchASlot5">Bench</div>
+            <div class="slot" id="benchASlot6">Bench</div>
+        </div>
+    </div>
+
+    <div id="playerContainer"></div>
+
+    <div class="side">
+        <h2>Side B</h2>
+        <div class="slots">
+            <div class="slot" id="pg2Slot">Point Guard 2</div>
+            <div class="slot" id="pf3Slot">Power Forward 3</div>
+            <div class="slot" id="pf4Slot">Power Forward 4</div>
+            <div class="slot" id="c2Slot">Center 2</div>
+            <div class="slot" id="sf3Slot">Small Forward 3</div>
+            <div class="slot" id="sf4Slot">Small Forward 4</div>
+            <div class="slot" id="sg2Slot">Shooting Guard 2</div>
+            <div class="slot" id="benchBSlot1">Bench</div>
+            <div class="slot" id="benchBSlot2">Bench</div>
+            <div class="slot" id="benchBSlot3">Bench</div>
+            <div class="slot" id="benchBSlot4">Bench</div>
+            <div class="slot" id="benchBSlot5">Bench</div>
+            <div class="slot" id="benchBSlot6">Bench</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample player data (replace with actual player data)
+    const players = [
+        { name: 'LeBron James', position: 'Small Forward' },
+        { name: 'Stephen Curry', position: 'Point Guard' },
+        { name: 'Kevin Durant', position: 'Power Forward' },
+        { name: 'Kawhi Leonard', position: 'Small Forward' },
+        { name: 'James Harden', position: 'Shooting Guard' },
+        { name: 'Giannis Antetokounmpo', position: 'Power Forward' },
+        { name: 'Anthony Davis', position: 'Center' },
+        { name: 'Luka Dončić', position: 'Point Guard' },
+        { name: 'Damian Lillard', position: 'Point Guard' },
+        { name: 'Joel Embiid', position: 'Center' }
+        // Add more players as needed
+    ];
+
+    // Variable to track the side currently drafting (Side A or Side B)
+    let currentSide = 'A';
+
+    // Function to render player cards
+    function renderPlayers() {
+        const container = document.getElementById('playerContainer');
+        container.innerHTML = '';
+
+        players.forEach(player => {
+            const card = document.createElement('div');
+            card.classList.add('player-card');
+            card.innerHTML = `
+                <h2>${player.name}</h2>
+                <p>Position: ${player.position}</p>
+                <button onclick="draftPlayer('${player.name}', '${player.position}')">Draft</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Function to draft a player into a slot
+    function draftPlayer(playerName, position) {
+        const draftSide = currentSide === 'A' ? 'B' : 'A'; // Determine the opposite side
+        const slotId = position.toLowerCase() + 'Slot';
+        const slot = document.getElementById(slotId);
+        if (slot.textContent.trim() === 'Bench' || slot.textContent.trim() === '') {
+            // Draft the player to the slot if it's empty or already contains a Bench placeholder
+            slot.textContent = playerName;
+            currentSide = draftSide; // Update the current drafting side
+        } else {
+            // Inform the user that the slot is already filled
+            alert(`The ${position} slot for ${draftSide} is already filled.`);
+        }
+    }
+
+    // Render initial players
+    renderPlayers();
+</script>
+
+</body>
+</html>
