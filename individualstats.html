@@ -1,7 +1,5 @@
----
-layout: header
----
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -200,9 +198,10 @@ layout: header
     </section>
 
     <section>
-        <h2>Performance Graph</h2>
-        <canvas id="performanceGraph" width="600" height="300"></canvas>
-        <!-- Add your JavaScript code here to render the graph using a library like Chart.js -->
+        <h2>Performance Graphs</h2>
+        <canvas id="pointsGraph" width="600" height="300"></canvas>
+        <canvas id="assistsGraph" width="600" height="300"></canvas>
+        <canvas id="reboundsGraph" width="600" height="300"></canvas>
     </section>
 
     <footer>
@@ -210,5 +209,84 @@ layout: header
     </footer>
 
     <!-- Add your JavaScript libraries here, if needed -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            fetch('https://api.example.com/player/stats')
+                .then(response => response.json())
+                .then(data => {
+                    const playerStats = data.stats.slice(0, 5); // Get stats for the last five games
+                    const gameDates = playerStats.map(stat => stat.date);
+                    const points = playerStats.map(stat => stat.points);
+                    const assists = playerStats.map(stat => stat.assists);
+                    const rebounds = playerStats.map(stat => stat.rebounds);
 
+                    // Points Graph
+                    new Chart('pointsGraph', {
+                        type: 'line',
+                        data: {
+                            labels: gameDates,
+                            datasets: [{
+                                label: 'Points',
+                                data: points,
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Assists Graph
+                    new Chart('assistsGraph', {
+                        type: 'line',
+                        data: {
+                            labels: gameDates,
+                            datasets: [{
+                                label: 'Assists',
+                                data: assists,
+                                borderColor: 'rgb(54, 162, 235)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // Rebounds Graph
+                    new Chart('reboundsGraph', {
+                        type: 'line',
+                        data: {
+                            labels: gameDates,
+                            datasets: [{
+                                label: 'Rebounds',
+                                data: rebounds,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching player stats:', error));
+        });
+    </script>
 </body>
+</html>
