@@ -201,11 +201,64 @@
             });
         }
 
-        function sendToBackend() {
-            // Collect and prepare data from selected slots
-            // Send data to backend
-            // Implement your logic for sending data to the backend
-            console.log("Send team data to backend");
+        function prepareTeamData() {
+            let teamA = [];
+            let teamB = [];
+
+            for (let i = 1; i <= 12; i++) {
+                let playerAStats = {
+                    name: `Player A${i}`,
+                    stats: {
+                        points: parseFloat(document.querySelector("#a" + i + "-points").value),
+                        rebounds: parseFloat(document.querySelector("#a" + i + "-rebounds").value),
+                        assists: parseFloat(document.querySelector("#a" + i + "-assists").value)
+                    }
+                };
+                teamA.push(playerAStats);
+
+                let playerBStats = {
+                    name: `Player B${i}`,
+                    stats: {
+                        points: parseFloat(document.querySelector("#b" + i + "-points").value),
+                        rebounds: parseFloat(document.querySelector("#b" + i + "-rebounds").value),
+                        assists: parseFloat(document.querySelector("#b" + i + "-assists").value)
+                    }
+                };
+                teamB.push(playerBStats);
+            }
+
+            let teamData = {
+                teamA: teamA,
+                teamB: teamB
+            };
+
+            return teamData;
+        }
+
+        function sendTeamData() {
+            let dataToSend = prepareTeamData();
+            
+            fetch("/path/to/your/backend/endpoint", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Successfully sent team data to backend", data);
+                // Handle the response data
+            })
+            .catch((error) => {
+                console.error("Error sending team data to backend", error);
+                // Handle the error
+            });
         }
     </script>
 </body>
