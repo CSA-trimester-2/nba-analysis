@@ -412,6 +412,7 @@ layout: header
                 // Extracting full name
                  gotID = `${player.id}`.trim();
                 console.log(gotID)
+                getNBAStats(gotID)
           
           } else {
             console.error('Data is undefined, null, or empty.');
@@ -435,4 +436,22 @@ layout: header
             console.error('Data is undefined, null, or empty.');
           }
       }
+      async function getNBAStats(id) {
+        const isLocalhost = Boolean(
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "[::1]" ||
+          window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+        );
+        const api = isLocalhost ? "http://localhost:8062" : "https://bob.nighthawkcodingsociety.com";
+        const apiUrl = api+`/nba/stats/2023/${id}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            displayStats(data);
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching NBA stats:', error);
+        }
+    }
 </script>
