@@ -5,49 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Basketball Player Draft</title>
     <style>
-        /* Styles from both HTML files */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 40px 20px;
             background-color: #F0F0F0;
         }
-        h1 {
+        h1, h2 {
             text-align: center;
             margin-bottom: 20px;
         }
         .container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
         }
         .side {
             width: 30%;
+            margin: 0 10px;
         }
         .player-card {
-            width: 200px; /* Adjusted width */
+            width: 100%;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 15px; /* Adjusted padding */
-            margin-bottom: 10px; /* Adjusted margin */
-        }
-        .player-card h2 {
-            margin-top: 0;
+            padding: 15px;
+            margin-bottom: 10px;
         }
         .player-card button {
             background-color: #4CAF50;
             color: white;
-            padding: 8px 16px; /* Adjusted padding */
+            padding: 8px 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
+            width: 100%;
         }
-        .player-card button:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
-        }
-        .slots {
+        .slots, #playerSearchContainer {
             margin-bottom: 20px;
         }
         .slot {
@@ -61,9 +55,11 @@
         .selectedSlot {
             background-color: lightblue;
         }
+        .playerSelected {
+            background-color: lightgreen;
+        }
         #playerSearchContainer {
             display: none;
-            margin-bottom: 20px;
         }
         #searchResults {
             margin-top: 10px;
@@ -76,16 +72,24 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        #turnIndicator {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Basketball Player Draft</h1>
+    <div id="turnIndicator">Player A's Turn</div>
     <div id="playerSearchContainer">
         <input type="text" id="playerSearchInput" placeholder="Enter player name">
         <div id="searchResults"></div>
     </div>
     <div class="container">
-        <div class="side">
+        <div class="side sideA">
             <h2>Side A</h2>
             <div class="slots">
                 <div class="slot" id="pg1Slot">Point Guard 1</div>
@@ -103,7 +107,7 @@
                 <div class="slot" id="benchASlot6">Bench</div>
             </div>
         </div>
-        <div class="side">
+        <div class="side sideB">
             <h2>Side B</h2>
             <div class="slots">
                 <div class="slot" id="pg2Slot">Point Guard 2</div>
@@ -128,14 +132,21 @@
     <script>
         $(document).ready(function() {
             let currentSlot;
+            let currentPlayer = 'A';
+            let selectedPlayers = [];  // Array to keep track of selected players
 
             $(".slot").click(function() {
-                if(currentSlot) {
-                    currentSlot.removeClass('selectedSlot');
+                if ((currentPlayer === 'A' && $(this).closest('.side').hasClass('sideA')) || 
+                    (currentPlayer === 'B' && $(this).closest('.side').hasClass('sideB'))) {
+                    if(currentSlot) {
+                        currentSlot.removeClass('selectedSlot');
+                    }
+                    currentSlot = $(this);
+                    currentSlot.addClass('selectedSlot');
+                    $("#playerSearchContainer").show();
+                } else {
+                    alert("It's not your turn!");
                 }
-                currentSlot = $(this);
-                currentSlot.addClass('selectedSlot');
-                $("#playerSearchContainer").show();
             });
 
             $("#playerSearchInput").on('input', function() {
@@ -149,15 +160,34 @@
 
             $("#searchResults").on('click', '.searchResult', function() {
                 const playerName = $(this).text();
+                if(selectedPlayers.includes(playerName)) {
+                    alert("This player has already been selected!");
+                    return;
+                }
+
                 currentSlot.text(playerName);
                 currentSlot.removeClass('selectedSlot').addClass('playerSelected');
                 $("#playerSearchContainer").hide();
                 $("#playerSearchInput").val(''); // Clear the search input
                 $("#searchResults").empty(); // Clear previous search results
+                selectedPlayers.push(playerName); // Add player to selectedPlayers list
+
+                toggleTurn(); // Switch the turn to the other player after successful selection
             });
 
             $("#submitTeams").click(sendToBackend);
         });
+
+        function toggleTurn() {
+            if(currentPlayer === 'A') {
+                currentPlayer = 'B';
+                $("#turnIndicator").text("Player B's Turn"); // Update the turn indicator on the page
+            } else {
+                currentPlayer = 'A';
+                $("#turnIndicator").text("Player A's Turn"); // Update the turn indicator on the page
+            }
+            console.log("Turn toggled, now it's Player " + currentPlayer + "'s turn"); // Log for debugging
+        }
 
         function searchPlayer(query) {
             $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${query}`, function(data) {
