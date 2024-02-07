@@ -56,11 +56,34 @@
             border-radius: 5px;
             padding: 10px;
             margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .selectedSlot {
+            background-color: lightblue;
+        }
+        #playerSearchContainer {
+            display: none;
+            margin-bottom: 20px;
+        }
+        #searchResults {
+            margin-top: 10px;
+        }
+        .searchResult {
+            padding: 5px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <h1>Basketball Player Draft</h1>
+    <div id="playerSearchContainer">
+        <input type="text" id="playerSearchInput" placeholder="Enter player name">
+        <div id="searchResults"></div>
+    </div>
     <div class="container">
         <div class="side">
             <h2>Side A</h2>
@@ -80,7 +103,6 @@
                 <div class="slot" id="benchASlot6">Bench</div>
             </div>
         </div>
-        <div id="playerContainer"></div>
         <div class="side">
             <h2>Side B</h2>
             <div class="slots">
@@ -105,94 +127,55 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Fetch player data from the API
-            $.getJSON("https://www.balldontlie.io/api/v1/players", function(data) {
-                renderPlayers(data.data);
+            let currentSlot;
+
+            $(".slot").click(function() {
+                if(currentSlot) {
+                    currentSlot.removeClass('selectedSlot');
+                }
+                currentSlot = $(this);
+                currentSlot.addClass('selectedSlot');
+                $("#playerSearchContainer").show();
+            });
+
+            $("#playerSearchInput").on('input', function() {
+                const searchQuery = $(this).val();
+                if(searchQuery.length >= 3) { // Only search if the query is 3 or more characters
+                    searchPlayer(searchQuery);
+                } else {
+                    $("#searchResults").empty(); // Clear previous search results
+                }
+            });
+
+            $("#searchResults").on('click', '.searchResult', function() {
+                const playerName = $(this).text();
+                currentSlot.text(playerName);
+                currentSlot.removeClass('selectedSlot').addClass('playerSelected');
+                $("#playerSearchContainer").hide();
+                $("#playerSearchInput").val(''); // Clear the search input
+                $("#searchResults").empty(); // Clear previous search results
             });
 
             $("#submitTeams").click(sendToBackend);
         });
 
-        let teamAPlayers = []; // Array to store Player A's team
-        let teamBPlayers = []; // Array to store Player B's team
-        let currentSide = 'A'; // Variable to track the side currently drafting (Side A or Side B)
-
-        function renderPlayers(players) {
-            const container = $("#playerContainer");
-            container.empty();
-            players.forEach(player => {
-                const card = $("<div>").addClass("player-card");
-                card.html(`
-                    <h2>${player.first_name} ${player.last_name}</h2>
-                    <p>Position: ${player.position}</p>
-                    <p>Team: ${player.team.full_name}</p>
-                    <button onclick="draftPlayer('${player.first_name} ${player.last_name}', '${player.position}')">Draft</button>
-                `);
-                container.append(card);
-            });
-        }
-
-        function draftPlayer(playerName, position) {
-            const draftSide = currentSide === 'A' ? 'B' : 'A'; // Determine the opposite side
-            const slotId = position.toLowerCase() + 'Slot';
-            const slot = $(`#${slotId}`);
-            if (slot.text().trim() === 'Bench' || slot.text().trim() === '') {
-                slot.text(playerName);
-                currentSide = draftSide; // Update the current drafting side
-
-                // Fetch and store detailed stats for the drafted player
-                $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${playerName}`, function(data) {
-                    const player = data.data[0];
-                    fetchGameStats(player.id, currentSide); // Fetch stats and associate them with the current side
+        function searchPlayer(query) {
+            $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${query}`, function(data) {
+                const searchResultsContainer = $("#searchResults");
+                searchResultsContainer.empty(); // Clear previous search results
+                data.data.forEach(player => {
+                    const playerName = `${player.first_name} ${player.last_name}`;
+                    const searchResult = $("<div>").addClass("searchResult").text(playerName);
+                    searchResultsContainer.append(searchResult);
                 });
-            } else {
-                alert(`The ${position} slot for ${draftSide} is already filled.`);
-            }
-        }
-
-        function fetchGameStats(playerId, side) {
-            $.getJSON(`https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&per_page=20`, function(gamesData) {
-                if (gamesData.data && gamesData.data.length > 0) {
-                    const statsMap = {
-                        points: [],
-                        rebounds: [],
-                        assists: []
-                    };
-
-                    gamesData.data.forEach(game => {
-                        statsMap.points.push(game.pts ?? 0);
-                        statsMap.rebounds.push(game.reb ?? 0);
-                        statsMap.assists.push(game.ast ?? 0);
-                    });
-
-                    if (side === 'A') {
-                        teamAPlayers.push({ playerId: playerId, statsMap: statsMap });
-                    } else {
-                        teamBPlayers.push({ playerId: playerId, statsMap: statsMap });
-                    }
-                } else {
-                    alert("Game stats not available for this player.");
-                }
             });
         }
 
         function sendToBackend() {
-            $.ajax({
-                type: "POST",
-                url: "your-backend-endpoint", // Replace with your actual endpoint
-                contentType: "application/json",
-                data: JSON.stringify({
-                    teamA: teamAPlayers,
-                    teamB: teamBPlayers
-                }),
-                success: function(response) {
-                    console.log("Data sent successfully");
-                    // Handle response here (e.g., display the probability of winning for each team)
-                },
-                error: function(err) {
-                    console.log("Error sending data", err);
-                }
-            });
+            // Collect and prepare data from selected slots
+            // Send data to backend
+            // Implement your logic for sending data to the backend
+            console.log("Send team data to backend");
         }
     </script>
 </body>
