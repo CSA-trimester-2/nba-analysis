@@ -127,6 +127,8 @@ function fetchGameStats(playerId) {
 }
 
 function displayLast20GameStats(statsMap) {
+    console.log(statsMap.points);
+    console.log("f")
     const statsTable = $("#statsLast20Games tbody");
     statsTable.empty(); // Clear previous data
 
@@ -141,8 +143,159 @@ function displayLast20GameStats(statsMap) {
         `;
         statsTable.append(row);
     }
+    predictPoints(statsMap.points)
+    predictRebounds(statsMap.rebounds)
+    predictAssists(statsMap.assists)
+}
+function LinearRegression() {
+    this.data = [];
+
+    this.coefficients = {
+        a: 0,
+        b: 0
+    };
+
+    this.means = {
+        x: 0,
+        y: 0
+    };
+}
+
+LinearRegression.prototype.addData = function(x, y) {
+    this.data.push([x, y]);
+};
+
+LinearRegression.prototype.calculateCoefficients = function() {
+    if (this.data.length == 0) return;
+
+    let sumX = 0;
+    let sumY = 0;
+
+    this.data.forEach(function(point) {
+        sumX += point[0];
+        sumY += point[1];
+    });
+
+    this.means.x = sumX / this.data.length;
+    this.means.y = sumY / this.data.length;
+
+    let numerator = 0;
+    let denominator = 0;
+
+    this.data.forEach(function(point) {
+        numerator += (point[0] - this.means.x) * (point[1] - this.means.y);
+        denominator += Math.pow(point[0] - this.means.x, 2);
+    }, this);
+
+    this.coefficients.b = numerator / denominator;
+    this.coefficients.a = this.means.y - (this.coefficients.b * this.means.x);
+};
+
+LinearRegression.prototype.predict = function(x) {
+    return this.coefficients.a + (this.coefficients.b * x);
+};
+function predictPoints(data){
+    let myLR = new LinearRegression();
+
+    console.log(data.length)
+    for(let i = 1; i<= data.length; i++){  
+        myLR.addData(i, data[i-1]);
+    }
+
+    myLR.calculateCoefficients();
+
+    let prediction = myLR.predict(data.length+1);
+    console.log(prediction)
+    let intercept = myLR.coefficients.a
+    console.log("Intercept:", intercept);
+    let slope = myLR.coefficients.b
+    console.log("Slope:", slope);
+
+    graphData(data, prediction, intercept, slope, "Points Prediction")
+}
+function predictRebounds(data){
+    let myLR = new LinearRegression();
+
+    console.log(data.length)
+    for(let i = 1; i<= data.length; i++){  
+        myLR.addData(i, data[i-1]);
+    }
+
+    myLR.calculateCoefficients();
+
+    let prediction = myLR.predict(data.length+1);
+    console.log(prediction)
+    let intercept = myLR.coefficients.a
+    console.log("Intercept:", intercept);
+    let slope = myLR.coefficients.b
+    console.log("Slope:", slope);
+    
+    graphData(data, prediction, intercept, slope, "Rebounds Prediction")
+}
+function predictAssists(data){
+    let myLR = new LinearRegression();
+
+    console.log(data.length)
+    for(let i = 1; i<= data.length; i++){  
+        myLR.addData(i, data[i-1]);
+    }
+
+    myLR.calculateCoefficients();
+
+    let prediction = myLR.predict(data.length+1);
+    console.log(prediction)
+    let intercept = myLR.coefficients.a
+    console.log("Intercept:", intercept);
+    let slope = myLR.coefficients.b
+    console.log("Slope:", slope);
+    
+    graphData(data, prediction, intercept, slope, "Assists Prediction")
+}
+
+function graphData(data, prediction, intercept, slope, title){
+    var stat = title.substring(0, title.length - 11)
+    const coords = [];
+    for (let i = 1; i <= data.length; i++) {
+        coords.push({ x: i, y: data[i-1], color: "black" })
+    }
+    coords.push({ x: data.length + 1, y: prediction, color: "red" });
+    console.log(coords)
+    const lineCoords = [];
+    lineCoords.push({ x: (-5), y: slope * (-5) + intercept });
+    lineCoords.push({ x: data.length+10, y: slope * (data.length+10) + intercept });
+    var chart = new CanvasJS.Chart(`chartContainer${stat}`, {
+        title:{
+            text: title
+        },
+        axisX: {
+            title: "Game",
+            minimum: 0,
+            maximum: data.length+5
+        },
+        axisY:{
+            title: stat,
+        },
+        data: [{
+            type: "line",
+            dataPoints: lineCoords,
+            color: "black",
+            markerBorderWidth: 0
+        }, {
+            type: "scatter",
+            toolTipContent: `<b>${stat}: </b>{y}`,
+            dataPoints: coords
+        }]
+    });
+    chart.render();
 }
 </script>
 
 </body>
+
+<body>
+    <div id="chartContainerPoints" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainerRebounds" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainerAssists" style="height: 370px; width: 100%;"></div>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+    </body>
 </html>
