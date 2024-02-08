@@ -199,6 +199,11 @@
                 }
             });
 
+            $("#submitTeams").click(function() {
+                let teamData = prepareTeamData(); // Prepare the data when the button is clicked
+                sendTeamData(teamData); // Send the data to the backend
+            });
+
             function toggleTurn() {
                 if(currentPlayer === 'B') {
                     currentPlayer = 'A';
@@ -212,23 +217,40 @@
 
             $("#searchResults").on('click', '.searchResult', function() {
                 const playerName = $(this).text();
+                const names = playerName.split(" "); // Assuming names are separated by a space
+                const firstName = names[0];
+                const lastName = names[1] || ''; // Handle potential single-name scenarios
+
                 if(selectedPlayers.includes(playerName)) {
                     alert("This player has already been selected!");
                     return;
                 }
 
-                currentSlot.text(playerName);
-                currentSlot.removeClass('selectedSlot').addClass('playerSelected');
-                $("#playerSearchContainer").hide();
-                $("#playerSearchInput").val(''); // Clear the search input
-                $("#searchResults").empty(); // Clear previous search results
-                selectedPlayers.push(playerName); // Add player to selectedPlayers list
+                // Fetch the player ID from the API
+                $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${firstName}%20${lastName}`, function(data) {
+                        if (data && data.data.length > 0) {
+                            const player = data.data[0];
 
-                toggleTurn(); // Switch the turn to the other player after successful selection
+                            // Now that we have the player's ID, we can store it alongside the player's name
+                            currentSlot.text(playerName);
+                            currentSlot.data('player-id', player.id); // Store the player's ID in the slot's data
+                            currentSlot.removeClass('selectedSlot').addClass('playerSelected');
+                            $("#playerSearchContainer").hide();
+                            $("#playerSearchInput").val(''); // Clear the search input
+                            $("#searchResults").empty(); // Clear previous search results
+                            selectedPlayers.push(playerName); // Add player to selectedPlayers list
+
+                            toggleTurn(); // Switch the turn to the other player after successful selection
+                        } else {
+                            alert("Player not found.");
+                        }
+                    }).fail(function() {
+                        alert("Error fetching player data.");
+                    });
+                $("#submitTeams").click(sendToBackend);
             });
-
-            $("#submitTeams").click(sendToBackend);
         });
+
 
         function searchPlayer(query) {
             $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${query}`, function(data) {
@@ -242,36 +264,53 @@
             });
         }
 
-        function sendToBackend() {
-            // Collect and prepare data from selected slots
-            // Send data to backend
-            // Implement your logic for sending data to the backend
-            console.log("Send team data to backend");
+        function fetchGameStats(playerId) {
+            const currentYear = new Date().getFullYear();
+            const seasonYear = (new Date().getMonth() >= 9) ? currentYear : currentYear - 1; // NBA season starts in October
+
+            return $.getJSON(`https://www.balldontlie.io/api/v1/stats?seasons[]=${seasonYear}&player_ids[]=${playerId}&per_page=1`)
+                .then(gamesData => {
+                    if (gamesData.data && gamesData.data.length > 0) {
+                        const game = gamesData.data[0]; // Take the most recent game
+                        const stats = {
+                            points: game.pts ?? 0,
+                            rebounds: game.reb ?? 0,
+                            assists: game.ast ?? 0
+                        };
+                        return stats;
+                    } else {
+                        console.log("Game stats not available for this player:", playerId);
+                        return { points: 0, rebounds: 0, assists: 0 }; // Return default stats if not available
+                    }
+                }).fail(() => {
+                    console.error("Error fetching game stats for player ID:", playerId);
+                    return { points: 0, rebounds: 0, assists: 0 }; // Return default stats on failure
+                });
         }
-        function prepareTeamData() {
+
+
+        async function prepareTeamData() {
             let teamA = [];
             let teamB = [];
 
-            for (let i = 1; i <= 12; i++) {
-                let playerAStats = {
-                    name: `Player A${i}`,
-                    stats: {
-                        points: parseFloat(document.querySelector("#a" + i + "-points").value),
-                        rebounds: parseFloat(document.querySelector("#a" + i + "-rebounds").value),
-                        assists: parseFloat(document.querySelector("#a" + i + "-assists").value)
-                    }
-                };
-                teamA.push(playerAStats);
+            // Process Team A
+            const teamASlots = $('.sideA .slot.playerSelected');
+            for (let i = 0; i < teamASlots.length; i++) {
+                let slot = teamASlots[i];
+                let playerName = $(slot).text(); // Assuming player's name is directly in the text
+                let playerId = $(slot).data('player-id'); // Assuming you store player IDs in data attributes
+                let playerStats = await fetchGameStats(playerId); // Fetch stats asynchronously
+                teamA.push({ name: playerName, stats: playerStats });
+            }
 
-                let playerBStats = {
-                    name: `Player B${i}`,
-                    stats: {
-                        points: parseFloat(document.querySelector("#b" + i + "-points").value),
-                        rebounds: parseFloat(document.querySelector("#b" + i + "-rebounds").value),
-                        assists: parseFloat(document.querySelector("#b" + i + "-assists").value)
-                    }
-                };
-                teamB.push(playerBStats);
+            // Process Team B
+            const teamBSlots = $('.sideB .slot.playerSelected');
+            for (let i = 0; i < teamBSlots.length; i++) {
+                let slot = teamBSlots[i];
+                let playerName = $(slot).text();
+                let playerId = $(slot).data('player-id'); // Again, assuming player IDs are stored
+                let playerStats = await fetchGameStats(playerId);
+                teamB.push({ name: playerName, stats: playerStats });
             }
 
             let teamData = {
@@ -282,8 +321,10 @@
             return teamData;
         }
 
-        function sendTeamData() {
-            let dataToSend = prepareTeamData();
+        async function sendTeamData() {
+            let dataToSend = await prepareTeamData();
+            let jsonString = JSON.stringify(dataToSend);
+            console.log("Sending JSON payload to backend:", jsonString);
 
             fetch("/path/to/your/backend/endpoint", {
                 method: "POST",
