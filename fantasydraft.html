@@ -120,11 +120,22 @@
         #submitTeams:hover {
             background-color: #45a049;
         }
+        .resultContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>Basketball Player Draft</h1>
     <div id="turnIndicator">Player A's Turn</div>
+    <div id="projectedFantasyPoints"></div>
     <div id="playerSearchContainer">
         <input type="text" id="playerSearchInput" placeholder="Enter player name">
         <div id="searchResults"></div>
@@ -345,7 +356,16 @@
                 // Access projected fantasy points for each team from 'data' object
                 const projectedFantasyPointsTeamA = data.projectedFantasyPointsTeamA;
                 const projectedFantasyPointsTeamB = data.projectedFantasyPointsTeamB;
-                // Use the projected fantasy points as needed
+
+                // Update the HTML to display the projected fantasy scores
+                $("#projectedFantasyPoints").empty(); // Clear previous content
+                const resultContainer = $("<div>").addClass("resultContainer");
+
+                const teamAResult = $("<div>").addClass("result").text("Team A Projected Fantasy Score: " + projectedFantasyPointsTeamA);
+                const teamBResult = $("<div>").addClass("result").text("Team B Projected Fantasy Score: " + projectedFantasyPointsTeamB);
+
+                resultContainer.append(teamAResult, teamBResult);
+                $("#projectedFantasyPoints").append(resultContainer);
             })
             .catch((error) => {
                 console.error("Error sending team data to backend", error);
