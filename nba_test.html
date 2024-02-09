@@ -70,8 +70,6 @@
         <tbody></tbody>
     </table>
 
-<<<<<<< HEAD
-=======
     <h3>Detailed Stats</h3>
     <table id="detailedstatsTable">
         <thead>
@@ -83,7 +81,6 @@
         <tbody></tbody>
     </table>
 
->>>>>>> 6bb18b7 (fixing merge conflicts)
     <!-- Add Canvas for Chart -->
     <canvas id="statsChart" width="400" height="200"></canvas>
 
@@ -95,12 +92,6 @@
                 const lastName = playerName[1];
 
                 $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${firstName}%20${lastName}`, function (data) {
-<<<<<<< HEAD
-                    const player = data.data[0];
-                    displayGeneralInfo(player);
-
-                    fetchGameStats(player.id);
-=======
                     if (data.data.length > 0) {
                         const player = data.data[0];
                         displayGeneralInfo(player);
@@ -120,7 +111,6 @@
                     } else {
                         alert("Player not found.");
                     }
->>>>>>> 6bb18b7 (fixing merge conflicts)
                 }).fail(function () {
                     console.error("Error fetching player data.");
                 });
@@ -150,15 +140,8 @@
                         assists: []
                     };
 
-<<<<<<< HEAD
-                    // Sort games by date
-                    const sortedGames = gamesData.data.sort((a, b) => new Date(b.game.date) - new Date(a.game.date));
-
-                    // Take the last 20 games of the current season
-=======
                     // Sort games by date and take the last 20 games
                     const sortedGames = gamesData.data.sort((a, b) => new Date(b.game.date) - new Date(a.game.date));
->>>>>>> 6bb18b7 (fixing merge conflicts)
                     const last20Games = sortedGames.slice(0, 20);
 
                     last20Games.forEach(game => {
@@ -169,10 +152,7 @@
 
                     displayLast20GameStats(statsMap);
                     drawChart(statsMap); // Call drawChart function with statsMap data
-<<<<<<< HEAD
-=======
                     sendStatsToBackend(statsMap); // Function to send data to backend
->>>>>>> 6bb18b7 (fixing merge conflicts)
                 } else {
                     alert("Game stats not available for this player.");
                 }
@@ -181,8 +161,6 @@
             });
         }
 
-<<<<<<< HEAD
-=======
         function sendStatsToBackend(statsMap) {
             const jsonPayload = JSON.stringify(statsMap);
             console.log("Sending JSON payload to backend:", jsonPayload); // Log the stringified JSON
@@ -208,7 +186,6 @@
                 });
         }
 
->>>>>>> 6bb18b7 (fixing merge conflicts)
         function displayLast20GameStats(statsMap) {
             const statsTable = $("#statsLast20Games tbody");
             statsTable.empty(); // Clear previous data
