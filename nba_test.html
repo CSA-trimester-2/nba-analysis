@@ -70,6 +70,20 @@
         <tbody></tbody>
     </table>
 
+<<<<<<< HEAD
+=======
+    <h3>Detailed Stats</h3>
+    <table id="detailedstatsTable">
+        <thead>
+            <tr>
+                <th>Stat</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+>>>>>>> 6bb18b7 (fixing merge conflicts)
     <!-- Add Canvas for Chart -->
     <canvas id="statsChart" width="400" height="200"></canvas>
 
@@ -81,10 +95,32 @@
                 const lastName = playerName[1];
 
                 $.getJSON(`https://www.balldontlie.io/api/v1/players?search=${firstName}%20${lastName}`, function (data) {
+<<<<<<< HEAD
                     const player = data.data[0];
                     displayGeneralInfo(player);
 
                     fetchGameStats(player.id);
+=======
+                    if (data.data.length > 0) {
+                        const player = data.data[0];
+                        displayGeneralInfo(player);
+
+                        fetchGameStats(player.id);
+
+                        // Fetch detailed stats using player's ID for the 2022 season
+                        $.getJSON(`https://www.balldontlie.io/api/v1/season_averages?season=2022&player_ids[]=${player.id}`, function (statsData) {
+                            if (statsData.data && statsData.data.length > 0) {
+                                displayDetailedStats(statsData.data[0]);
+                                const fantasyRating = computeFantasyRating(statsData.data[0]);
+                                $("#fantasyScore").html(`Fantasy Rating: ${fantasyRating}/6`);
+                            } else {
+                                alert("Detailed stats not available for this player.");
+                            }
+                        });
+                    } else {
+                        alert("Player not found.");
+                    }
+>>>>>>> 6bb18b7 (fixing merge conflicts)
                 }).fail(function () {
                     console.error("Error fetching player data.");
                 });
@@ -114,10 +150,15 @@
                         assists: []
                     };
 
+<<<<<<< HEAD
                     // Sort games by date
                     const sortedGames = gamesData.data.sort((a, b) => new Date(b.game.date) - new Date(a.game.date));
 
                     // Take the last 20 games of the current season
+=======
+                    // Sort games by date and take the last 20 games
+                    const sortedGames = gamesData.data.sort((a, b) => new Date(b.game.date) - new Date(a.game.date));
+>>>>>>> 6bb18b7 (fixing merge conflicts)
                     const last20Games = sortedGames.slice(0, 20);
 
                     last20Games.forEach(game => {
@@ -128,6 +169,10 @@
 
                     displayLast20GameStats(statsMap);
                     drawChart(statsMap); // Call drawChart function with statsMap data
+<<<<<<< HEAD
+=======
+                    sendStatsToBackend(statsMap); // Function to send data to backend
+>>>>>>> 6bb18b7 (fixing merge conflicts)
                 } else {
                     alert("Game stats not available for this player.");
                 }
@@ -136,6 +181,34 @@
             });
         }
 
+<<<<<<< HEAD
+=======
+        function sendStatsToBackend(statsMap) {
+            const jsonPayload = JSON.stringify(statsMap);
+            console.log("Sending JSON payload to backend:", jsonPayload); // Log the stringified JSON
+
+            fetch('https://yourbackend.com/api/playerstats', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: jsonPayload,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // or .text() if the response is not JSON
+                })
+                .then(data => {
+                    console.log("Stats successfully sent to the backend.", data);
+                })
+                .catch(error => {
+                    console.error("Error sending stats to the backend.", error);
+                });
+        }
+
+>>>>>>> 6bb18b7 (fixing merge conflicts)
         function displayLast20GameStats(statsMap) {
             const statsTable = $("#statsLast20Games tbody");
             statsTable.empty(); // Clear previous data
@@ -153,6 +226,84 @@
             }
         }
 
+        function displayDetailedStats(stats) {
+            const statsTable = $("#detailedstatsTable tbody");
+            statsTable.empty(); // Clear previous data
+
+            const statNames = {
+                "games_played": "Games Played",
+                "player_id": "Player ID",
+                "season": "Season",
+                "min": "Minutes Played",
+                "fgm": "Field Goals Made",
+                "fga": "Field Goals Attempted",
+                "fg3m": "Three-Point Field Goals Made",
+                "fg3a": "Three-Point Field Goals Attempted",
+                "ftm": "Free Throws Made",
+                "fta": "Free Throws Attempted",
+                "oreb": "Offensive Rebounds",
+                "dreb": "Defensive Rebounds",
+                "reb": "Total Rebounds",
+                "ast": "Assists",
+                "stl": "Steals",
+                "blk": "Blocks",
+                "turnover": "Turnovers",
+                "pf": "Personal Fouls",
+                "pts": "Points",
+                "fg_pct": "Field Goal Percentage",
+                "fg3_pct": "Three-Point Field Goal Percentage",
+                "ft_pct": "Free Throw Percentage"
+            };
+
+            for (const key in statNames) {
+                if (stats[key] !== undefined) {
+                    const row = `<tr><td>${statNames[key]}</td><td>${stats[key]}</td></tr>`;
+                    statsTable.append(row);
+                }
+            }
+        }
+
+        function computeFantasyRating(stats) {
+            // Weights for each stat
+            const weights = {
+                pts: 0.2,
+                reb: 0.15,
+                ast: 0.15,
+                stl: 0.1,
+                blk: 0.1,
+                fg_pct: 0.1,
+                ft_pct: 0.1,
+                fg3_pct: 0.05,
+                turnover: -0.05  // Negative weight since turnovers are bad
+            };
+
+            // Normalize each stat to a scale of 0 to 1
+            // For simplicity, we'll use some arbitrary max values for normalization
+            const normalizedStats = {
+                pts: stats.pts / 30,
+                reb: stats.reb / 15,
+                ast: stats.ast / 10,
+                stl: stats.stl / 5,
+                blk: stats.blk / 5,
+                fg_pct: stats.fg_pct,
+                ft_pct: stats.ft_pct,
+                fg3_pct: stats.fg3_pct,
+                turnover: stats.turnover / 5
+            };
+
+            // Compute the weighted sum
+            let rawScore = 0;
+            for (const key in weights) {
+                rawScore += normalizedStats[key] * weights[key];
+            }
+
+            // Scale the raw score to a rating out of 10
+            const rating = Math.min(Math.max(rawScore * 10, 0), 10);
+
+            return rating.toFixed(1);  // Return the rating rounded to one decimal place
+        }
+
+        // Function to draw Chart.js chart
         function drawChart(statsMap) {
             const ctx = document.getElementById('statsChart').getContext('2d');
             const chart = new Chart(ctx, {
@@ -194,4 +345,8 @@
 
 </body>
 
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 6bb18b7 (fixing merge conflicts)
