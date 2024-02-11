@@ -45,11 +45,16 @@
 
                     // Check if players are found
                     if (playerData.data.length > 0) {
-                        // Get the player ID
-                        var playerId = playerData.data[0].id;
+                        // Check if multiple players with the same name are found
+                        if (playerData.data.length > 1) {
+                            displaySearchByFullNameMessage();
+                        } else {
+                            // Get the player ID
+                            var playerId = playerData.data[0].id;
 
-                        // Call the function to fetch and display player stats
-                        fetchPlayerStats(playerId);
+                            // Call the function to fetch and display player stats
+                            fetchPlayerStats(playerId);
+                        }
                     } else {
                         // Display a message if no players are found
                         displayNoPlayersFound();
@@ -100,6 +105,11 @@
         function displayError() {
             var playerDataDiv = document.getElementById('playerData');
             playerDataDiv.textContent = 'Error fetching data.';
+        }
+
+        function displaySearchByFullNameMessage() {
+            var playerDataDiv = document.getElementById('playerData');
+            playerDataDiv.textContent = 'Multiple players found with the same name. Please search by full name.';
         }
     </script>
 </body>
