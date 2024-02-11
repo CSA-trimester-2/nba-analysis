@@ -154,7 +154,7 @@
 
 <section>
     <h2>Player Information</h2>
-    <p id="playerInfo">Player Name: John Doe<br>Team: Team Name<br>Position: Point Guard</p>
+    <p id="playerInfo">Player Name: <br>Team: <br>Position: </p>
 </section>
 
 <section>
@@ -162,21 +162,27 @@
     <table id="statsTable">
         <thead>
             <tr>
-                <th>GAME</th>
-                <th>MIN</th>
-                <th>PTS</th>
+                <th>Games Played: </th>
+                <th>Min</th>
+                <th>FGM</th>
+                <th>FGA</th>
                 <th>REB</th>
                 <th>AST</th>
                 <th>BLK</th>
                 <th>STL</th>
-                <th>TO</th>
-                <th>FG</th>
-                <th>FG%</th>
-                <th>3PT</th>
-                <th>3PT%</th>
             </tr>
         </thead>
-        <!-- Add table body content here if needed -->
+        <tr>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td><br></td>
+            
+        </tr>
     </table>
 </section>
 
@@ -244,21 +250,48 @@
             });
     }
 
-    function displayPlayerStats(playerData) {
-        var statsTable = document.getElementById('statsTable');
-        statsTable.innerHTML = ''; // Clear previous data
+    function displayPlayerStats(stats) {
+    var statsTable = document.getElementById('statsTable');
 
-        // Add the player stats to the table
-        for (var key in playerData.data[0]) {
-            if (key !== 'id') {
-                var row = statsTable.insertRow();
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                cell1.textContent = key;
-                cell2.textContent = playerData.data[0][key];
-            }
-        }
+    if (stats.data.length > 0) {
+        const playerStats = stats.data[0];
+
+        // Assuming your statistics object has properties corresponding to the table headers
+        var tableHtml = `
+            <thead>
+                <tr>
+                    <th>Games Played</th>
+                    <th>Minutes</th>
+                    <th>Field Goals Made</th>
+                    <th>Field Goals Attempted</th>
+                    <th>Rebounds</th>
+                    <th>Assists</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${playerStats.games_played || 'N/A'}</td>
+                    <td>${playerStats.min || 'N/A'}</td>
+                    <td>${playerStats.fgm || 'N/A'}</td>
+                    <td>${playerStats.fga || 'N/A'}</td>
+                    <td>${playerStats.reb || 'N/A'}</td>
+                    <td>${playerStats.ast || 'N/A'}</td>
+                    <td>${playerStats.blk || 'N/A'}</td>
+                    <td>${playerStats.stl || 'N/A'}</td>
+                </tr>
+            </tbody>
+        `;
+
+        // Replace the existing content of the statsTable with the updated tableHtml
+        statsTable.innerHTML = tableHtml;
+    } else {
+        // Handle the case where no stats are available
+        statsTable.innerHTML = '<p>No stats available</p>';
     }
+}
+
 </script>
 
 <!-- Add your JavaScript libraries here, if needed -->
