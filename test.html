@@ -87,6 +87,23 @@
             margin-bottom: 16px;
             box-sizing: border-box;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -106,7 +123,19 @@
 
         <button onclick="getNBAStats()">Get Stats</button>
 
-        <div id="statsContainer"></div>
+        <div id="statsContainer">
+            <table id="statsTable">
+                <thead>
+                    <tr>
+                        <th>Stat</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Stats will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
     </main>
 
     <script>
@@ -136,37 +165,49 @@
         }
 
         function displayStats(data) {
-            const statsContainer = document.getElementById('statsContainer');
+            const statsTableBody = document.querySelector('#statsTable tbody');
             const playerStats = data.data[0];
 
-            const html = `
-                <h2>${playerStats.player.first_name} ${playerStats.player.last_name}'s Stats</h2>
-                <p>Points: ${playerStats.pts}</p>
-                <p>Assists: ${playerStats.ast}</p>
-                <p>Rebounds: ${playerStats.reb}</p>
-                <p>Field Goals Made: ${playerStats.fgm}</p>
-                <p>Field Goals Attempted: ${playerStats.fga}</p>
-                <p>Field Goal Percentage: ${playerStats.fg_pct}</p>
-                <p>3-Pointers Made: ${playerStats.fg3m}</p>
-                <p>3-Pointers Attempted: ${playerStats.fg3a}</p>
-                <p>3-Point Percentage: ${playerStats.fg3_pct}</p>
-                <p>Free Throws Made: ${playerStats.ftm}</p>
-                <p>Free Throws Attempted: ${playerStats.fta}</p>
-                <p>Free Throw Percentage: ${playerStats.ft_pct}</p>
-                <p>Defensive Rebounds: ${playerStats.dreb}</p>
-                <p>Offensive Rebounds: ${playerStats.oreb}</p>
-                <p>Personal Fouls: ${playerStats.pf}</p>
-                <p>Steals: ${playerStats.stl}</p>
-                <p>Blocks: ${playerStats.blk}</p>
-                <p>Turnovers: ${playerStats.turnover}</p>
+            const statsData = [
+                ['Points', playerStats.pts],
+                ['Assists', playerStats.ast],
+                ['Rebounds', playerStats.reb],
+                ['Field Goals Made', playerStats.fgm],
+                ['Field Goals Attempted', playerStats.fga],
+                ['Field Goal Percentage', playerStats.fg_pct],
+                ['3-Pointers Made', playerStats.fg3m],
+                ['3-Pointers Attempted', playerStats.fg3a],
+                ['3-Point Percentage', playerStats.fg3_pct],
+                ['Free Throws Made', playerStats.ftm],
+                ['Free Throws Attempted', playerStats.fta],
+                ['Free Throw Percentage', playerStats.ft_pct],
+                ['Defensive Rebounds', playerStats.dreb],
+                ['Offensive Rebounds', playerStats.oreb],
+                ['Personal Fouls', playerStats.pf],
+                ['Steals', playerStats.stl],
+                ['Blocks', playerStats.blk],
+                ['Turnovers', playerStats.turnover],
+            ];
 
-                <h3>Game Information</h3>
-                <p>Date: ${playerStats.game.date}</p>
-                <p>Opponent: ${playerStats.game.visitor_team_id === playerStats.team.id ? playerStats.game.home_team_id : playerStats.game.visitor_team_id}</p>
-                <p>Result: ${playerStats.team.id === playerStats.game.home_team_id ? playerStats.game.home_team_score : playerStats.game.visitor_team_score} - ${playerStats.team.id === playerStats.game.home_team_id ? playerStats.game.visitor_team_score : playerStats.game.home_team_score}</p>
-            `;
+            // Clear previous content
+            statsTableBody.innerHTML = '';
 
-            statsContainer.innerHTML = html;
+            // Populate the table dynamically
+            statsData.forEach(stat => {
+                const row = document.createElement('tr');
+                const [statName, statValue] = stat;
+
+                const statNameCell = document.createElement('td');
+                statNameCell.textContent = statName;
+
+                const statValueCell = document.createElement('td');
+                statValueCell.textContent = statValue;
+
+                row.appendChild(statNameCell);
+                row.appendChild(statValueCell);
+
+                statsTableBody.appendChild(row);
+            });
         }
     </script>
 </body>
