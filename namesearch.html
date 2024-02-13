@@ -253,8 +253,21 @@
                 });
         }
 
+        // Function to destroy the existing chart instance
+        function destroyChart() {
+            var performanceCanvas = document.getElementById('performanceGraph');
+            var existingChart = Chart.getChart(performanceCanvas);
+
+            if (existingChart) {
+                existingChart.destroy();
+            }
+        }
+
         // Function to render the performance graph using Chart.js
         function renderPerformanceGraph(stats) {
+            // Destroy existing chart before rendering a new one
+            destroyChart();
+
             var performanceCanvas = document.getElementById('performanceGraph');
             var performanceData = {
                 labels: ["Games Played", "Minutes", "Field Goals Made", "Field Goals Attempted", "Rebounds", "Assists", "Blocks", "Steals"],
