@@ -157,7 +157,7 @@
 
     <section>
         <h2>Player Information</h2>
-        <p id="playerInfo">Player Name: <br>Team: <br>Position: </p>
+        <p id="playerInfo">Player Name: <br>Team: <br>Position: <br>Player ID:</p>
     </section>
 
     <section>
@@ -233,7 +233,7 @@
             if (playerData.data.length > 0) {
                 const player = playerData.data[0];
 
-                playerNameElement.innerHTML = `Player Name: ${player.first_name} ${player.last_name}<br>Team: ${player.team.full_name}<br>Position: ${player.position}`;
+                playerNameElement.innerHTML = `Player Name: ${player.first_name} ${player.last_name}<br>Team: ${player.team.full_name}<br>Position: ${player.position}<br>Player ID: ${player.id}`;
             } else {
                 playerNameElement.innerHTML = 'Player Name: Not Found<br>Team: Not Found<br>Position: Not Found';
             }
