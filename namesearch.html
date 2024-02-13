@@ -305,50 +305,55 @@
         }
 
         // Call this function after displaying player stats
+        
         function displayPlayerStats(stats) {
-            var statsTable = document.getElementById('statsTable');
+    var statsTable = document.getElementById('statsTable');
 
-            if (stats.data.length > 0) {
-                const playerStats = stats.data[0];
+    if (stats.data.length > 0) {
+        const playerStats = stats.data[0];
 
-                // Assuming your statistics object has properties corresponding to the table headers
-                var tableHtml = `
-                    <thead>
-                        <tr>
-                            <th>Games Played</th>
-                            <th>Minutes</th>
-                            <th>Field Goals Made</th>
-                            <th>Field Goals Attempted</th>
-                            <th>Rebounds</th>
-                            <th>Assists</th>
-                            <th>Blocks</th>
-                            <th>Steals</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>${playerStats.games_played || 'N/A'}</td>
-                            <td>${playerStats.min || 'N/A'}</td>
-                            <td>${playerStats.fgm || 'N/A'}</td>
-                            <td>${playerStats.fga || 'N/A'}</td>
-                            <td>${playerStats.reb || 'N/A'}</td>
-                            <td>${playerStats.ast || 'N/A'}</td>
-                            <td>${playerStats.blk || 'N/A'}</td>
-                            <td>${playerStats.stl || 'N/A'}</td>
-                        </tr>
-                    </tbody>
-                `;
+        // Assuming your statistics object has properties corresponding to the table headers
+        var tableHtml = `
+            <thead>
+                <tr>
+                    <th>Games Played</th>
+                    <th>Minutes</th>
+                    <th>Field Goals Made</th>
+                    <th>Field Goals Attempted</th>
+                    <th>Rebounds</th>
+                    <th>Assists</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${playerStats.games_played || 'N/A'}</td>
+                    <td>${playerStats.min || 'N/A'}</td>
+                    <td>${playerStats.fgm || 'N/A'}</td>
+                    <td>${playerStats.fga || 'N/A'}</td>
+                    <td>${playerStats.reb || 'N/A'}</td>
+                    <td>${playerStats.ast || 'N/A'}</td>
+                    <td>${playerStats.blk || 'N/A'}</td>
+                    <td>${playerStats.stl || 'N/A'}</td>
+                </tr>
+            </tbody>
+        `;
 
-                // Replace the existing content of the statsTable with the updated tableHtml
-                statsTable.innerHTML = tableHtml;
+        // Replace the existing content of the statsTable with the updated tableHtml
+        statsTable.innerHTML = tableHtml;
 
-                // Render the performance graph
-                renderPerformanceGraph(stats);
-            } else {
-                // Handle the case where no stats are available
-                statsTable.innerHTML = '<p>No stats available</p>';
-            }
-        }
+        // Render the performance graph
+        renderPerformanceGraph(stats);
+    } else {
+        // Handle the case where no stats are available
+        statsTable.innerHTML = '<p>No stats available</p>';
+
+        // Destroy the chart if it exists
+        destroyChart();
+    }
+}
+
     </script>
 
 </body>
