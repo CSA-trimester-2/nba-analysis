@@ -124,11 +124,22 @@
         #submitTeams:hover {
             background-color: #45a049;
         }
+        .resultContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result {
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>Basketball Player Draft</h1>
     <div id="turnIndicator">Player A's Turn</div>
+    <div id="projectedFantasyPoints"></div>
     <div id="playerSearchContainer">
         <input type="text" id="playerSearchInput" placeholder="Enter player name">
         <div id="searchResults"></div>
@@ -330,22 +341,35 @@
             let jsonString = JSON.stringify(dataToSend);
             console.log("Sending JSON payload to backend:", jsonString);
 
-            fetch("/path/to/your/backend/endpoint", {
+            fetch("http://localhost:8062/api/simulate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(dataToSend)
+                body: jsonString
             })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json();
+                return response.json(); // Parse response body as JSON
             })
             .then(data => {
                 console.log("Successfully sent team data to backend", data);
                 // Handle the response data
+                // Access projected fantasy points for each team from 'data' object
+                const projectedFantasyPointsTeamA = data.projectedFantasyPointsTeamA;
+                const projectedFantasyPointsTeamB = data.projectedFantasyPointsTeamB;
+
+                // Update the HTML to display the projected fantasy scores
+                $("#projectedFantasyPoints").empty(); // Clear previous content
+                const resultContainer = $("<div>").addClass("resultContainer");
+
+                const teamAResult = $("<div>").addClass("result").text("Team A Projected Fantasy Score: " + projectedFantasyPointsTeamA);
+                const teamBResult = $("<div>").addClass("result").text("Team B Projected Fantasy Score: " + projectedFantasyPointsTeamB);
+
+                resultContainer.append(teamAResult, teamBResult);
+                $("#projectedFantasyPoints").append(resultContainer);
             })
             .catch((error) => {
                 console.error("Error sending team data to backend", error);
