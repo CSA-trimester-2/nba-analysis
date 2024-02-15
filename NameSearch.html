@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Player Stats</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F0F0F0;
+            color: #333;
+        }
+        header {
+            background: url('https://cdn11.bigcommerce.com/s-jdhnct1/images/stencil/original/products/404/1109/basketball_stadium_horz__55809.1459878564.jpg?c=2') center/cover no-repeat;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+        section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #FFFFED;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #F5F5F5;
+        }
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+        input[type=text] {
+            width: 30.4%;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+            background-image: url('searchicon.png');
+            background-size: 20px;
+            background-position: 10px 10px;
+            background-repeat: no-repeat;
+            padding: 12px 20px 12px 40px;
+            transition: width 0.4s ease-in-out;
+        }
+        input[type=text]:focus {
+            width: 85.9%;
+        }
+        input[type=submit] {
+            background-color: #FFFFED;
+            border-style: solid;
+            border-radius: 5px;
+            border-color: #000000;
+            color: black;
+            padding: 14px 32px;
+            text-decoration: none;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        .autocomplete {
+            width: 44.2%;
+            padding: 10px;
+            padding-left: 28%;
+            display: inline-block;
+            align-items: center;
+            justify-content: center;
+        }
+        .autocomplete-items {
+            position: relative;
+            border: 1px solid #D4D4D4;
+            border-bottom: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #D4D4D4;
+        }
+        .autocomplete-items div:hover {
+            background-color: #E9E9E9;
+        }
+        .autocomplete-active {
+            background-color: #FFFFED !important;
+            color: #000000;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Basketball Player Stats</h1>
+    </header>
+    <form id="form" onsubmit="return false;">
+        <div class="autocomplete">
+            <label for="playerName">Enter Player Name:</label>
+            <input type="text" id="playerName" placeholder="Enter player name">
+            <button onclick="searchPlayer()">Search</button>
+        </div>
+    </form>
+    <section>
+        <h2>Player Information</h2>
+        <p id="playerInfo">Player Name: <br>Team: <br>Position: </p>
+    </section>
+    <section>
+        <h2>Season 2023-2024 Stats</h2>
+        <table id="statsTable">
+            <thead>
+                <tr>
+                    <th>Games Played: </th>
+                    <th>Min</th>
+                    <th>FGM</th>
+                    <th>FGA</th>
+                    <th>REB</th>
+                    <th>AST</th>
+                    <th>BLK</th>
+                    <th>STL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td><br></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h2>Performance Graph</h2>
+        <canvas id="performanceGraph" width="600" height="300"></canvas>
+    </section>
+    <footer>
+        <p>&copy; 2024 Basketball Stats Page</p>
+    </footer>
+    <script>
+        async function searchPlayer() {
+            var playerName = document.getElementById('playerName').value;
+            try {
+                // Make a Fetch API request to your backend
+                const response = await fetch(`http://localhost:8062/api/players?search=${playerName}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const playerData = await response.json();
+                // Display the player data
+                displayPlayerData(playerData);
+                // If player is found, fetch and display player stats
+                if (playerData.data.length > 0) {
+                    const playerId = playerData.data[0].id;
+                    fetchPlayerStats(playerId);
+                }
+            } catch (error) {
+                console.error('Error fetching player data:', error.message);
+            }
+        }
+        function displayPlayerData(playerData) {
+            var playerInfoSection = document.querySelector('section:nth-of-type(1)');
+            var playerNameElement = playerInfoSection.querySelector('p:nth-of-type(1)');
+            if (playerData.data.length > 0) {
+                const player = playerData.data[0];
+                playerNameElement.innerHTML = `Player Name: ${player.first_name} ${player.last_name}<br>Team: ${player.team.full_name}<br>Position: ${player.position}`;
+            } else {
+                playerNameElement.innerHTML = 'Player Name: Not Found<br>Team: Not Found<br>Position: Not Found';
+            }
+        }
+        function fetchPlayerStats(playerId) {
+            const apiUrl = `http://localhost:8062/api/player/${playerId}`;
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Display the player stats
+                    displayPlayerStats(data);
+                })
+                .catch(error => {
+                    console.error("Error fetching player stats:", error);
+                });
+        }
+        // Function to destroy the existing chart instance
+        function destroyChart() {
+            var performanceCanvas = document.getElementById('performanceGraph');
+            var existingChart = Chart.getChart(performanceCanvas);
+            if (existingChart) {
+                existingChart.destroy();
+            }
+        }
+        // Function to render the performance graph using Chart.js
+        function renderPerformanceGraph(stats) {
+            // Destroy existing chart before rendering a new one
+            destroyChart();
+            var performanceCanvas = document.getElementById('performanceGraph');
+            var performanceData = {
+                labels: ["Games Played", "Minutes", "Field Goals Made", "Field Goals Attempted", "Rebounds", "Assists", "Blocks", "Steals"],
+                datasets: [{
+                    label: 'Player Performance',
+                    data: [
+                        stats.data[0].games_played || 0,
+                        stats.data[0].min || 0,
+                        stats.data[0].fgm || 0,
+                        stats.data[0].fga || 0,
+                        stats.data[0].reb || 0,
+                        stats.data[0].ast || 0,
+                        stats.data[0].blk || 0,
+                        stats.data[0].stl || 0,
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                }]
+            };
+            var performanceOptions = {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            };
+            var performanceChart = new Chart(performanceCanvas, {
+                type: 'bar',
+                data: performanceData,
+                options: performanceOptions
+            });
+        }
+        // Call this function after displaying player stats
+        function displayPlayerStats(stats) {
+    var statsTable = document.getElementById('statsTable');
+    if (stats.data.length > 0) {
+        const playerStats = stats.data[0];
+        // Assuming your statistics object has properties corresponding to the table headers
+        var tableHtml = `
+            <thead>
+                <tr>
+                    <th>Games Played</th>
+                    <th>Minutes</th>
+                    <th>Field Goals Made</th>
+                    <th>Field Goals Attempted</th>
+                    <th>Rebounds</th>
+                    <th>Assists</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${playerStats.games_played || 'N/A'}</td>
+                    <td>${playerStats.min || 'N/A'}</td>
+                    <td>${playerStats.fgm || 'N/A'}</td>
+                    <td>${playerStats.fga || 'N/A'}</td>
+                    <td>${playerStats.reb || 'N/A'}</td>
+                    <td>${playerStats.ast || 'N/A'}</td>
+                    <td>${playerStats.blk || 'N/A'}</td>
+                    <td>${playerStats.stl || 'N/A'}</td>
+                </tr>
+            </tbody>
+        `;
+        // Replace the existing content of the statsTable with the updated tableHtml
+        statsTable.innerHTML = tableHtml;
+        // Render the performance graph
+        renderPerformanceGraph(stats);
+    } else {
+        // Handle the case where no stats are available
+        statsTable.innerHTML = '<p>No stats available</p>';
+        // Destroy the chart if it exists
+        destroyChart();
+    }
+}
+    </script>
+</body>
+</html>
