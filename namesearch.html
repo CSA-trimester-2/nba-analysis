@@ -406,7 +406,17 @@
         function renderPerformanceGraph(stats) {
             // Destroy existing chart before rendering a new one
             destroyChart();
-
+            console.log((stats.data[0].min || 0))
+            let timeString = (stats.data[0].min || 0);
+            let parts = timeString.split(":");
+            let wholeNumberPart = parseInt(parts[0]);
+            let fractionalPart = parseInt(parts[1]) / 60;
+            console.log(fractionalPart)
+            fractionalPart = Math.round(fractionalPart*100);
+            
+            console.log(fractionalPart)
+            let result = wholeNumberPart +"."+ fractionalPart;
+            console.log(result);
             var performanceCanvas = document.getElementById('performanceGraph');
             var performanceData = {
                 labels: ["Games Played", "Minutes", "Field Goals Made", "Field Goals Attempted", "Rebounds", "Assists", "Blocks", "Steals"],
@@ -414,7 +424,7 @@
                     label: 'Player Performance',
                     data: [
                         stats.data[0].games_played || 0,
-                        stats.data[0].min || 0,
+                        result || 0,
                         stats.data[0].fgm || 0,
                         stats.data[0].fga || 0,
                         stats.data[0].reb || 0,
