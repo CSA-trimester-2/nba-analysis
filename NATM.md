@@ -1,12 +1,6 @@
----
-toc: true
-comments: true
-layout: post
-title: Night at the Museum Trimester 2
-description: Trimester 2 blog for the Night at the Museum
-type: hacks
-courses: {csa: {week: 23} }
----
+<header>
+</header>
+
 # Two Trimester focus planning
 
 ## Capturing the data:
@@ -34,29 +28,28 @@ We think that our demonstration was definitely more captivating than any of the 
 
 ## Visuals and pics of team and people you talked:
 
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/1.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/2.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/3.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/4.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/5.jpg)
-
+![]({{ site.baseurl }}/images/1.jpg)
+![]({{ site.baseurl }}/images/2.jpg)
+![]({{ site.baseurl }}/images/3.jpg)
+![]({{ site.baseurl }}/images/4.jpg)
+![]({{ site.baseurl }}/images/5.jpg)
 # Blog on event
 
 ## Something you saw in CompSci that impressive:
 
 One project which we saw that had a lot of potential was in the CSSE section. They created a Super Mario game but with multiplayer capabilities. The game was interactive, had easy controls, and was visually appealing. Furthermore, there was a leaderboard where you could play and compare your score to your friends, which was pretty cool. It seemed professional and was impressive.
 
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/10.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/11.jpg)
+![]({{ site.baseurl }}/images/10.jpg)
+![]({{ site.baseurl }}/images/11.jpg)
 
 ## Something you saw outside of CompSci that you liked:
 
 One of the projects that was very interesting outside of the Computer Science Room was the drawing and painting class, we found drawing that we could really realted with, for example there was a painting of kobe and also a paint of Mr.Mort that we thought were pretty cool and really relevant to us:
 
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/6.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/7.jpg)
+![]({{ site.baseurl }}/images/6.jpg)
+![]({{ site.baseurl }}/images/7.jpg)
 
 We also saw some drawing and painting of music which all of us enjoy and also a really unique drawing of fish:
 
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/8.jpg)
-![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/9.jpg)
+![]({{ site.baseurl }}/images/8.jpg)
+![]({{ site.baseurl }}/images/9.jpg)
