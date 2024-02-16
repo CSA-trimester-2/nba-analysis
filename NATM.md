@@ -27,18 +27,18 @@ courses: {csa: {week: 23} }
 
 # Blog / article on you and team
 
-## Reflection on glows/grows from your demo/presentations:
+## Reflection on glows/grows from demo/presentations:
 
 We think that our demonstration was definitely more captivating than any of the other projects we have been a part of in CS. Our demonstration was incredibly interactive, and we saw that the people who talked to us and tried out our basketball draft were genuinely pretty excited to see how the predictions turned out, and they were happy to win or lose. They were very interested to also understand how our simulation worked, and it was definitely good that all of our team members have a good understanding of how our project works inside and out, and were therefore all able to explain it to outsiders in an understandable manner. Something that we could work on for next time in terms of the demonstration is to make sure that everyone coming to our table can get the same experience - we noticed that sometimes when people would come over, we would show them solely the draft, and sometimes, if people were sticking around a bit longer at our table, we would show them both the drafting page and the individual statistics page. It would be better if everyone got the same exposure to our project, and this is something we can emphasize doing for next trimester's Night at the Museum.
 
 
 ## Visuals and pics of team and people you talked:
 
-![]()
-![]()
-![]()
-![]()
-![]()
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/1.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/2.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/3.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/4.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/5.jpg)
 
 # Blog on event
 
@@ -46,5 +46,17 @@ We think that our demonstration was definitely more captivating than any of the 
 
 One project which we saw that had a lot of potential was in the CSSE section. They created a Super Mario game but with multiplayer capabilities. The game was interactive, had easy controls, and was visually appealing. Furthermore, there was a leaderboard where you could play and compare your score to your friends, which was pretty cool. It seemed professional and was impressive.
 
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/10.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/11.jpg)
+
 ## Something you saw outside of CompSci that you liked:
 
+One of the projects that was very interesting outside of the Computer Science Room was the drawing and painting class, we found drawing that we could really realted with, for example there was a painting of kobe and also a paint of Mr.Mort that we thought were pretty cool and really relevant to us:
+
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/6.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/7.jpg)
+
+We also saw some drawing and painting of music which all of us enjoy and also a really unique drawing of fish:
+
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/8.jpg)
+![](https://github.com/CSA-trimester-2/nba-analysis-final/blob/main/images/9.jpg)
