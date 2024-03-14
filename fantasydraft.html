@@ -164,6 +164,17 @@
            color: white;
            cursor: pointer;
        }
+       #drawSpace {
+        position: fixed;
+        bottom: 10%;
+        left: 24.5%;
+        z-index: 9999;  
+        background-color: #F7F7F7;
+        border: 10px solid #0000FF;
+        height:800px;
+        width: 50%;
+        border-radius: 10px;
+    }
    </style>
 </head>
 <body>
@@ -223,10 +234,15 @@
        <h3>Add a comment</h3>
        <input type="text" id="userName" placeholder="Your name">
        <textarea id="text" placeholder="Your comment"></textarea>
+       <button onclick="addDrawing()" id="drawButton">Add Drawing</button>
        <button onclick="postComment()">Post Comment</button>
 
 
    </div>
+   <div id="drawSpace">
+    <canvas id="Board" left="10%" width="800px" height="750px" style="border:3px solid #548BC2;" onmousemove="coordinate(event)" onmousedown="mousedown()" onmouseup="mouseup()"></canvas>
+        <button id="saveButton">Save</button>
+    </div>
 
 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -469,6 +485,17 @@
        }
 
 //bingus here
+
+        let drawSpace = document.getElementById("drawSpace");
+        drawSpace.setAttribute("hidden", "hidden");
+       function addDrawing(){
+            let ishidden = drawSpace.getAttribute("hidden");
+            if (ishidden) {
+                drawSpace.removeAttribute("hidden");
+             } else {
+                drawSpace.setAttribute("hidden", "hidden");
+             }
+       }
        function postComment() {
            const userName = document.getElementById('userName').value;
            const gameName = document.getElementById('gameNameInput').value; // Use the same game name for posting
