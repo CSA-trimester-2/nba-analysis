@@ -164,6 +164,20 @@
            color: white;
            cursor: pointer;
        }
+       .exitButton{
+        position:absolute;
+        top:0;
+        right:0;
+        width:50px !important;
+        background-color:red !important;
+       }
+       .resetButton{
+        position:absolute;
+        top:0;
+        right:50px;
+        width:50px !important;
+        background-color:rgb(115, 0, 255) !important;
+       }
        #drawSpace {
         position: fixed;
         bottom: 10%;
@@ -240,7 +254,11 @@
 
    </div>
    <div id="drawSpace">
-    <canvas id="Board" left="10%" width="800px" height="750px" style="border:3px solid #548BC2;" onmousemove="coordinate(event)" onmousedown="mousedown()" onmouseup="mouseup()"></canvas>
+    
+    <button class="exitButton" id="Exit" onclick="exitDrawing()">Exit</button>
+    <button class="resetButton" id="Reset" onclick="reset()">Reset</button>
+    <br>
+    <canvas id="Board" left="10%" width="700px" height="700px" style="border:3px solid #548BC2;" onmousemove="coordinate(event)" onmousedown="mousedown()" onmouseup="mouseup()"></canvas>
         <button id="saveButton">Save</button>
     </div>
 
@@ -485,7 +503,10 @@
        }
 
 //bingus here
-
+       var b = document.getElementById("Board");
+    var board = b.getContext("2d");
+    var down
+    var size = 3
         let drawSpace = document.getElementById("drawSpace");
         drawSpace.setAttribute("hidden", "hidden");
        function addDrawing(){
@@ -496,6 +517,28 @@
                 drawSpace.setAttribute("hidden", "hidden");
              }
        }
+       function exitDrawing(){
+        drawSpace.setAttribute("hidden", "hidden");
+       }
+       function reset(){
+        board.clearRect(0, 0, b.width, b.height)
+    }
+       function mousedown(){
+            down = 1
+        }
+        function mouseup(){
+            down = 0
+        }
+        function coordinate(event){
+            let rect = Board.getBoundingClientRect();
+            var x=event.clientX - rect.left;
+            var y=event.clientY - rect.top;
+            //console.log(x,"-",y)
+            if(down){
+                board.fillStyle = "#0000FF"
+                board.fillRect(x,y,size,size)
+            }
+        }
        function postComment() {
            const userName = document.getElementById('userName').value;
            const gameName = document.getElementById('gameNameInput').value; // Use the same game name for posting
