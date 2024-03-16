@@ -3,113 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Search and Stats</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 50%;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <title>NBA Player Season Statistics</title>
 </head>
 <body>
-    <h1>Player Search and Stats</h1>
-    
-    <label for="playerName">Enter Player Name:</label>
-    <input type="text" id="playerName" placeholder="Enter player name">
-    <button onclick="searchPlayer()">Search</button>
-    
-    <div id="playerData"></div>
+    <h1>NBA Player Season Statistics</h1>
+    <div>
+        <label for="searchInput">Search by Player Name:</label>
+        <input type="text" id="searchInput" placeholder="Enter Player Name">
+        <button onclick="searchPlayer()">Search</button>
+    </div>
+    <div id="playerStats"></div>
 
     <script>
-        function searchPlayer() {
-            var playerName = document.getElementById('playerName').value;
-
-            // Make an AJAX request to your backend to get player ID
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'http://localhost:8062/api/players?search=' + playerName, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Parse the JSON response
-                    var playerData = JSON.parse(xhr.responseText);
-
-                    // Check if players are found
-                    if (playerData.data.length > 0) {
-                        // Check if multiple players with the same name are found
-                        if (playerData.data.length > 1) {
-                            displaySearchByFullNameMessage();
-                        } else {
-                            // Get the player ID
-                            var playerId = playerData.data[0].id;
-
-                            // Call the function to fetch and display player stats
-                            fetchPlayerStats(playerId);
-                        }
-                    } else {
-                        // Display a message if no players are found
-                        displayNoPlayersFound();
-                    }
+        async function fetchPlayerIdByName(playerName) {
+            try {
+                const response = await fetch(`http://localhost:8062/api/players?search=${playerName}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data from backend');
                 }
-            };
-            xhr.send();
-        }
-
-        function fetchPlayerStats(playerId) {
-            const apiUrl = `http://localhost:8062/api/player/${playerId}`;
-
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    // Display the player data
-                    displayPlayerStats(data);
-                })
-                .catch(error => {
-                    console.error("Error fetching player data:", error);
-                    displayError();
-                });
-        }
-
-        function displayPlayerStats(playerData) {
-            var playerDataDiv = document.getElementById('playerData');
-            playerDataDiv.innerHTML = ''; // Clear previous data
-
-            // Display player data in a table
-            var table = document.createElement('table');
-
-            for (var key in playerData.data[0]) {
-                var row = table.insertRow();
-                var cell1 = row.insertCell(0);
-                var cell2 = row.insertCell(1);
-                cell1.textContent = key;
-                cell2.textContent = playerData.data[0][key];
+                const data = await response.json();
+                return data.data[0].id;
+            } catch (error) {
+                console.error('Error:', error.message);
+                return null;
             }
-
-            playerDataDiv.appendChild(table);
         }
 
-        function displayNoPlayersFound() {
-            var playerDataDiv = document.getElementById('playerData');
-            playerDataDiv.textContent = 'No players found.';
+        async function fetchPlayerStatistics(playerID) {
+            try {
+                const response = await fetch(`http://localhost:8062/api/nba/playerseason?player_ids=${playerID}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data from backend');
+                }
+                const data = await response.json();
+                displayPlayerStatistics(data);
+            } catch (error) {
+                console.error('Error:', error.message);
+            }
         }
 
-        function displayError() {
-            var playerDataDiv = document.getElementById('playerData');
-            playerDataDiv.textContent = 'Error fetching data.';
+        function displayPlayerStatistics(data) {
+            const playerStatsDiv = document.getElementById('playerStats');
+            const playerData = data.data[0];
+            const statsHtml = `
+                <h2>Player Statistics for Season ${playerData.season}</h2>
+                <ul>
+                    <li>Points: ${playerData.pts}</li>
+                            <li>Assists: ${playerData.ast}</li>
+                            <li>Turnovers: ${playerData.turnover}</li>
+                            <li>Personal Fouls: ${playerData.pf}</li>
+                            <li>Field Goals Attempted: ${playerData.fga}</li>
+                            <li>Field Goals Made: ${playerData.fgm}</li>
+                            <li>Free Throws Attempted: ${playerData.fta}</li>
+                            <li>Free Throws Made: ${playerData.ftm}</li>
+                            <li>Three-Point Field Goals Attempted: ${playerData.fg3a}</li>
+                            <li>Three-Point Field Goals Made: ${playerData.fg3m}</li>
+                            <li>Rebounds: ${playerData.reb}</li>
+                            <li>Offensive Rebounds: ${playerData.oreb}</li>
+                            <li>Defensive Rebounds: ${playerData.dreb}</li>
+                            <li>Steals: ${playerData.stl}</li>
+                            <li>Blocks: ${playerData.blk}</li>
+                            <li>Field Goal Percentage: ${playerData.fg_pct}</li>
+                            <li>Three-Point Field Goal Percentage: ${playerData.fg3_pct}</li>
+                            <li>Free Throw Percentage: ${playerData.ft_pct}</li>
+                            <li>Minutes: ${playerData.min}</li>
+                            <li>Games Played: ${playerData.games_played}</li>
+                            <li>Player ID: ${playerData.player_id}</li>
+                    <!-- Add more statistics as needed -->
+                </ul>
+            `;
+            playerStatsDiv.innerHTML = statsHtml;
         }
 
-        function displaySearchByFullNameMessage() {
-            var playerDataDiv = document.getElementById('playerData');
-            playerDataDiv.textContent = 'Multiple players found with the same name. Please search by full name.';
+        async function searchPlayer() {
+            const playerNameInput = document.getElementById('searchInput');
+            const playerName = playerNameInput.value.trim();
+            if (playerName !== '') {
+                const playerId = await fetchPlayerIdByName(playerName);
+                if (playerId !== null) {
+                    fetchPlayerStatistics(playerId);
+                } else {
+                    alert('Player not found. Please try again.');
+                }
+            } else {
+                alert('Please enter a player name.');
+            }
         }
     </script>
 </body>
