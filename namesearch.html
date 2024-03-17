@@ -312,27 +312,28 @@ layout: header
 
         // Call this function after displaying player stats
         async function searchPlayer() {
-            var playerName = document.getElementById('playerName').value;
+    var playerName = document.getElementById('playerName').value;
+    var [firstName, lastName] = playerName.split(" ");
 
-            try {
-                const response = await fetch(`http://localhost:8062/api/players?search=${playerName}`);
+    try {
+        const response = await fetch(`http://localhost:8062/api/players?firstName=${firstName}&lastName=${lastName}`);
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const playerData = await response.json();
-
-                displayPlayerData(playerData);
-
-                if (playerData.data.length > 0) {
-                    const playerId = playerData.data[0].id;
-                    fetchPlayerStats(playerId);
-                }
-            } catch (error) {
-                console.error('Error fetching player data:', error.message);
-            }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+
+        const playerData = await response.json();
+
+        displayPlayerData(playerData);
+
+        if (playerData.data.length > 0) {
+            const playerId = playerData.data[0].id;
+            fetchPlayerStats(playerId);
+        }
+    } catch (error) {
+        console.error('Error fetching player data:', error.message);
+    }
+}
 
         function displayPlayerData(playerData) {
             // Display player information
