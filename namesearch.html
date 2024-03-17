@@ -226,6 +226,11 @@ layout: header
         }
 
         function renderPerformanceGraph(stats) {
+    // Clear the old chart if it exists
+    if (window.performanceChart) {
+        window.performanceChart.destroy();
+    }
+
     const playerStats = stats.data[0];
     
     let minutesPlayed = playerStats.min;
@@ -261,12 +266,14 @@ layout: header
         }
     };
 
-    const performanceChart = new Chart(document.getElementById('performanceGraph'), {
+    const performanceChartCanvas = document.getElementById('performanceGraph');
+    window.performanceChart = new Chart(performanceChartCanvas, {
         type: 'bar',
         data: performanceData,
         options: performanceOptions
     });
 }
+
 
 
         function displayPlayerStats(stats) {
