@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Betting Site</title>
+    <script>
+        // Function to load players from the balldontlie API
+        async function loadPlayers() {
+            const response = await fetch('https://www.balldontlie.io/api/v1/players');
+            const data = await response.json();
+            const players = data.data; // Array of players
+            const selectElement = document.getElementById('playerName');
+            players.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `${player.first_name} ${player.last_name}`;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // Call loadPlayers when the page loads
+        window.onload = function() {
+            loadPlayers();
+        };
+
+        // Example function to handle form submission
+        function placeBet(event) {
+            event.preventDefault();
+            alert('This is a demo. In a real application, this action would process your bet.');
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome to the NBA Betting Site</h1>
+    <form id="bettingForm" onsubmit="placeBet(event)">
+        <label for="playerName">Player Name:</label>
+        <select id="playerName" name="playerName" required>
+            <option value="">Select a player</option>
+        </select>
+        <label for="betType">Bet Type:</label>
+        <select id="betType" name="betType">
+            <option value="over">Over</option>
+            <option value="under">Under</option>
+        </select>
+        <label for="betAmount">Bet Amount ($):</label>
+        <input type="number" id="betAmount" name="betAmount" required min="1">
+        <button type="submit">Place Bet</button>
+    </form>
+</body>
+</html>
