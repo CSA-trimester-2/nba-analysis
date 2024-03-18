@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Stats Portal</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1, h2 {
+            color: #27ae60;
+            margin-bottom: 20px;
+        }
+        label, input, button, p, div {
+            width: 100%;
+            margin-top: 10px;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218c54;
+        }
+        input {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Stats</h1>
+        <label for="username">Username:</label>
+        <input type="text" id="username" readonly>
+        
+        <button onclick="fetchCash()">Get Cash</button>
+        <button onclick="fetchEco()">Get Eco Score</button>
+
+        <h2>Update Stats</h2>
+        <input type="number" id="updateCash" placeholder="New Cash Value">
+        <button onclick="updateCash()">Update Cash</button>
+
+        <input type="number" id="updateEco" placeholder="New Eco Score">
+        <button onclick="updateEco()">Update Eco Score</button>
+
+        <h2>Compare Stats</h2>
+        <input type="text" id="compareUsername" placeholder="Username to Compare">
+        <button onclick="compareStats()">Compare</button>
+
+        <div id="statsDisplay"></div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:6942/api/person';
+        const userEmail = localStorage.getItem('userEmail');
+        document.getElementById('username').value = userEmail || 'No username found';
+
+        async function fetchCash() {
+            await fetchStatAndUpdateDisplay(`${apiUrl}/getCash`, 'cash');
+        }
+
+        async function fetchEco() {
+            await fetchStatAndUpdateDisplay(`${apiUrl}/getEco`, 'eco');
+        }
+
+        async function updateCash() {
+            const newCash = document.getElementById('updateCash').value;
+            await updateStatAndDisplayResult(`${apiUrl}/cashUpdate`, 'cash', newCash);
+        }
+
+        async function updateEco() {
+            const newEco = document.getElementById('updateEco').value;
+            await updateStatAndDisplayResult(`${apiUrl}/ecoUpdate`, 'eco', newEco);
+        }
+
+        async function compareStats() {
+            const compareUsername = document.getElementById('compareUsername').value;
+            const displayDiv = document.getElementById('statsDisplay');
+            if (!compareUsername) {
+                displayDiv.innerText = 'Please enter a username to compare.';
+                return;
+            }
+
+            try {
+                const currentStats = await fetch(`${apiUrl}/post`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                }).then(res => res.json());
+
+                const compareStats = await fetch(`${apiUrl}/post`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: compareUsername })
+                }).then(res => res.json());
+
+                displayDiv.innerHTML = `
+                    <p><strong>${userEmail}</strong> vs <strong>${compareUsername}</strong></p>
+                    <p>Cash: ${currentStats.cash} vs ${compareStats.cash}</p>
+                    <p>Eco Score: ${currentStats.eco} vs ${compareStats.eco}</p>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                displayDiv.innerText = 'Failed to compare stats. Please try again.';
+            }
+        }
+
+        async function fetchStatAndUpdateDisplay(url, statName) {
+            const displayDiv = document.getElementById('statsDisplay');
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                if (!response.ok) throw new Error('Network response was not ok.');
+
+                const result = await response.json();
+                displayDiv.innerHTML += `<p>${statName.toUpperCase()}: ${result}</p>`;
+            } catch (error) {
+                console.error('Error:', error);
+                displayDiv.innerText = `Failed to fetch ${statName}.`;
+            }
+        }
+
+        async function updateStatAndDisplayResult(url, statName, newValue) {
+            const displayDiv = document.getElementById('statsDisplay');
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, [statName]: newValue })
+                });
+                if (!response.ok) throw new Error('Network response was not ok.');
+
+                displayDiv.innerHTML += `<p>${statName.toUpperCase()} updated to ${newValue}.</p>`;
+            } catch (error) {
+                console.error('Error:', error);
+                displayDiv.innerText = `Failed to update ${statName}.`;
+            }
+        }
+
+        if (userEmail) {
+            fetchCash(); // Automatically fetch cash on page load
+            fetchEco();  // Automatically fetch eco on page load
+        }
+    </script>
+</body>
+</html>

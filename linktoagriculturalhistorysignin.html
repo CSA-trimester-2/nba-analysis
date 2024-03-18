@@ -75,7 +75,7 @@
                     // Here, we store the email in localStorage
                     localStorage.setItem('userEmail', email);
                     // Redirect the user to gettinguserstats.html or another page as needed
-                    window.location.href = 'gettinguserstats.html';
+                    window.location.href = 'statsfortheuser.html';
                 } else if (response.status === 401) {
                     throw new Error('Incorrect email or password.');
                 } else {
