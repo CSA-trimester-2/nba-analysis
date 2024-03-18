@@ -5,31 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBA Betting Site</title>
     <script>
-        // Function to load players from the balldontlie API
-        async function loadPlayers() {
-            const response = await fetch('https://www.balldontlie.io/api/v1/players');
-            const data = await response.json();
-            const players = data.data; // Array of players
-            const selectElement = document.getElementById('playerName');
-            players.forEach(player => {
-                const option = document.createElement('option');
-                option.value = player.id;
-                option.textContent = `${player.first_name} ${player.last_name}`;
-                selectElement.appendChild(option);
-            });
+        // Function to load players from the balldontlie API with pagination, using a CORS proxy
+        async function loadPlayers(page = 1) {
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = `https://www.balldontlie.io/api/v1/players?page=${page}&per_page=30`;
+            try {
+                const response = await fetch(proxyUrl + targetUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                const players = data.data; // Array of players
+                const selectElement = document.getElementById('playerName');
+                players.forEach(player => {
+                    if (player.first_name && player.last_name) { // Ensure player has a name
+                        const option = document.createElement('option');
+                        option.value = player.id;
+                        option.textContent = `${player.first_name} ${player.last_name}`;
+                        selectElement.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to fetch players:', error);
+            }
         }
-
+    
         // Call loadPlayers when the page loads
         window.onload = function() {
             loadPlayers();
         };
-
+    
         // Example function to handle form submission
         function placeBet(event) {
             event.preventDefault();
+            // Here you would add your logic to handle the bet
+            console.log('Bet placed for player ID:', document.getElementById('playerName').value);
             alert('This is a demo. In a real application, this action would process your bet.');
         }
-    </script>
+    </script>    
 </head>
 <body>
     <h1>Welcome to the NBA Betting Site</h1>
