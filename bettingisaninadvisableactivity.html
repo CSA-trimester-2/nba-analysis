@@ -83,7 +83,11 @@
                 if (!response.ok) {
                     throw new Error(`Server responded with ${response.status}`);
                 }
-                const { cash } = await response.json(); // Assuming the response format is { cash: number }
+                const data = await response.json(); // Parse the JSON response
+                if (data.cash === undefined) { // Check if 'cash' is undefined in the response
+                    throw new Error('Cash value is undefined.');
+                }
+                const cash = data.cash; // Access the cash value
                 localStorage.setItem('userCash', cash); // Update local storage with fetched cash
                 document.getElementById('cashAmount').textContent = `$${cash}`;
             } catch (error) {
