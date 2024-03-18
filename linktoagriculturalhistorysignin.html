@@ -58,10 +58,10 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
-    
+
             var email = document.getElementById('email').value;
             var password = document.getElementById('password').value;
-    
+
             fetch('http://localhost:6942/authenticate', {
                 method: 'POST',
                 headers: {
@@ -70,23 +70,17 @@
                 body: JSON.stringify({email: email, password: password}),
             })
             .then(response => {
-                // Check if the response is successful
                 if (response.ok) {
-                    return response.json();
+                    console.log('Authentication successful');
+                    // Here, we store the email in localStorage
+                    localStorage.setItem('userEmail', email);
+                    // Redirect the user to gettinguserstats.html or another page as needed
+                    window.location.href = 'gettinguserstats.html';
                 } else if (response.status === 401) {
-                    // Handle 401 Unauthorized error
                     throw new Error('Incorrect email or password.');
                 } else {
-                    // Handle other types of errors (e.g., server errors)
                     throw new Error('An error occurred. Please try again later.');
                 }
-            })
-            .then(data => {
-                console.log('Success:', data);
-                // Here, we store the email in localStorage
-                localStorage.setItem('userEmail', email);
-                // Redirect the user to gettinguserstats.html
-                window.location.href = 'gettinguserstats.html';
             })
             .catch((error) => {
                 console.error('Error:', error);
