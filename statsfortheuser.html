@@ -92,12 +92,60 @@
 
         async function updateCash() {
             const newCash = document.getElementById('updateCash').value;
-            await updateStatAndDisplayResult(`${apiUrl}/cashUpdate`, 'cash', newCash);
+            if (!userEmail || newCash === '') {
+                document.getElementById('statsDisplay').innerText = 'Missing username or new cash value.';
+                return;
+            }
+
+            const data = {
+                email: userEmail,
+                cash: parseInt(newCash, 10) // Ensure cash is sent as an integer
+            };
+
+            try {
+                const response = await fetch(`${apiUrl}/cashUpdate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+
+                const result = await response.text(); // Assuming response is plain text
+                document.getElementById('statsDisplay').innerText = result;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statsDisplay').innerText = `Failed to update cash. Error: ${error.message}`;
+            }
         }
 
         async function updateEco() {
             const newEco = document.getElementById('updateEco').value;
-            await updateStatAndDisplayResult(`${apiUrl}/ecoUpdate`, 'eco', newEco);
+            if (!userEmail || newEco === '') {
+                document.getElementById('statsDisplay').innerText = 'Missing username or new eco score.';
+                return;
+            }
+
+            const data = {
+                email: userEmail,
+                eco: parseInt(newEco, 10) // Ensure eco is sent as an integer
+            };
+
+            try {
+                const response = await fetch(`${apiUrl}/ecoUpdate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+
+                const result = await response.text(); // Assuming response is plain text
+                document.getElementById('statsDisplay').innerText = result;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statsDisplay').innerText = `Failed to update eco. Error: ${error.message}`;
+            }
         }
 
         async function compareStats() {
