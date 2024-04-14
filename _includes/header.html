@@ -1,126 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
 <header class="site-header">
   <div id="header">
-    <img src="https://raw.githubusercontent.com/JishnuS420/BlogCSA/main/nba.png" height="100" alt="Floating Image" class="floating-image">
     <nav>
       <ul class="left-links">
-        <li class="fork"><a href="{{site.baseurl}}/signin.html"><b>NBA</b> API and Analysis</a></li>
+        <li>
+          <img src="https://raw.githubusercontent.com/JishnuS420/BlogCSA/main/nba.png" height="50" alt="Floating Image" class="floating-image">
+        </li>
         <li class="fork"><a href="{{site.baseurl}}/">Home</a></li>
+        <li class="fork"><a href="{{site.baseurl}}/signin.html"><b>NBA</b> API and Analysis</a></li>
         <li class="fork"><a href="{{site.baseurl}}/individualstats.html">API (pull from frontend) </a></li>
         <li class="fork"><a href="{{site.baseurl}}/namesearch.html">API (pull from backend) </a></li>
         <li class="fork"><a href="{{site.baseurl}}/link.html">link</a></li>
         <li class="fork"><a href="{{site.baseurl}}/fantasydraft.html">Draft</a></li>
         <li class="fork"><a href="{{site.baseurl}}/cal_comment.html">Calendar/SocialTalk</a></li>
         <li class="title"><a href="{{site.github.repository_url}}#readme">View On GitHub</a></li>
+        <li>
+          <div class="sign-in-button">
+            <a href="{{site.baseurl}}/signin.html" class="fork">Sign In</a>
+          </div>
+        </li>
       </ul>
     </nav>
-    <div class="sign-in-button">
-      <a href="{{site.baseurl}}/signin.html" class="fork">Sign In</a>
-    </div>
   </div><!-- end header -->
 </header>
 
 <style>
-  #header {
-    z-index: 100;
-    left: 0;
-    top: 0px;
-    height: 60px;
-    width: 100%;
-    position: fixed;
-    background: #FFFFED;
-    border-bottom: 4px solid #ffffede8;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.25);
-    display: flex; /* Use flexbox for centering */
-    align-items: center; /* Center items vertically */
-    justify-content: space-between; /* Space between left links and right links */
-  }
+  /* Style for the header container */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff; /* Adjust background color as needed */
+  padding: 10px 20px; /* Adjust padding as needed */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+  z-index: 999; /* Ensure it's above other content */
+  margin-bottom: 20px;
+}
 
-  #header nav ul {
-    display: flex; /* Use flexbox for the list container */
-    list-style-type: none; /* Remove default list styling */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
-  }
+/* Style for the logo/image */
+#header img {
+  margin-right: 20px; /* Adjust margin as needed */
+}
 
-  #header nav ul.left-links {
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 210px;
-  }
+/* Style for the navigation links */
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;
+}
 
-  #header nav ul.left-links li {
-    margin-right: 100px; /* Adjust margin to add spacing between left links */
-  }
+nav ul li {
+  margin-right: 15px; /* Adjust margin between li elements */
+}
 
-  #header nav ul.right-links {
-    justify-content: flex-end; /* Align right links to the end */
-  }
+nav ul li:last-child {
+  margin-right: 0; /* Remove margin from the last li element */
+}
 
-  #header nav ul li {
-    display: inline-block;
-    margin: 0;
-  }
+/* Style for the sign-in button */
+.sign-in-button {
+  margin-left: auto; /* Push the sign-in button to the right */
+  color: #007bff;
+}
 
-  #header nav ul li a {
-    color: black;
-    border: 1px solid #FFFFED;
-    background: linear-gradient(#FFFFED, #ffffede8);
-    border-radius: 2px;
-    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0px 3px 7px rgba(0, 0, 0, 0.7);
-    background-color: #FFFFED;
-    padding: 10px 12px;
-    line-height: 14px;
-    font-size: 14px;
-    text-align: center;
-    text-decoration: none;
-  }
+/* Style for the links */
+nav ul li a {
+  text-decoration: none;
+  color: #333333; /* Adjust link color as needed */
+  font-weight: bold; /* Adjust font weight as needed */
+}
 
-  #header nav ul li a:hover {
-    background: linear-gradient(#cc8080, #d35c5c);
-    color: black;
-  }
-
-  #header .floating-image {
-    position: absolute;
-    top: 40%;
-    left: 100px;
-    transform: translate(0, -50%);
-    max-width: 50%;
-    max-height: 75%;
-    animation: float 2s infinite alternate;
-  }
-
-  .sign-in-button {
-    margin-right: 20px; /* Adjust margin as needed */
-  }
-
-  .sign-in-button a {
-    color: black;
-    border: 1px solid #FFFFED;
-    background: linear-gradient(#FFFFED, #ffffede8);
-    border-radius: 2px;
-    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0px 3px 7px rgba(0, 0, 0, 0.7);
-    background-color: #FFFFED;
-    padding: 10px 12px;
-    line-height: 14px;
-    font-size: 14px;
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .sign-in-button a:hover {
-    background: linear-gradient(#cc8080, #d35c5c);
-    color: black;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translate(0, -25%);
-    }
-    100% {
-      transform: translate(0, -40%);
-    }
-  }
+/* Style for the hover effect on links (optional) */
+nav ul li a:hover {
+  color: #007bff; /* Adjust hover color as needed */
+}
 </style>

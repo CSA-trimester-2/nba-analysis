@@ -170,26 +170,26 @@ layout: header
         <table id="statsTable">
             <thead>
                 <tr>
-                    <th>Games Played: </th>
-                    <th>Min</th>
-                    <th>FGM</th>
-                    <th>FGA</th>
-                    <th>REB</th>
-                    <th>AST</th>
-                    <th>BLK</th>
-                    <th>STL</th>
+                    <th>Minutes Played</th>
+                    <th>Field Goals Made</th>
+                    <th>Field Goals Attempted</th>
+                    <th>Rebounds</th>
+                    <th>Points</th>
+                    <th>Assists</th>
+                    <th>Blocks</th>
+                    <th>Steals</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td> </td>
-                    <td><br></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
@@ -205,172 +205,138 @@ layout: header
     </footer>
 
     <script>
-        var playerName = document.getElementById('playerName').value;
-        var namesArray=[]
-        function search(){
-            let input = document.getElementById("playerName").value;
-            const apiUrl = 'https://www.balldontlie.io/api/v1/players?search='+input;
-    
-            fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Display data in an HTML element
-                searchdata=JSON.stringify(data, null, 2);
-                //console.log(searchdata);
-    
-                sortdata(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-        function autocomplete(inp, arr) {
-            /*the autocomplete function takes two arguments,
-            the text field element and an array of possible autocompleted values:*/
-            var currentFocus;
-            /*execute a function when someone writes in the text field:*/
-            inp.addEventListener("input", function(e) {
-                var a, b, i, val = this.value;
-                /*close any already open lists of autocompleted values*/
-                closeAllLists();
-                if (!val) { return false;}
-                currentFocus = -1;
-                /*create a DIV element that will contain the items (values):*/
-                a = document.createElement("DIV");
-                a.setAttribute("id", this.id + "autocomplete-list");
-                a.setAttribute("class", "autocomplete-items");
-                /*append the DIV element as a child of the autocomplete container:*/
-                this.parentNode.appendChild(a);
-                /*for each item in the array...*/
-                for (i = 0; i < arr.length; i++) {
-                  /*check if the item starts with the same letters as the text field value:*/
-                  if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                    /*create a DIV element for each matching element:*/
-                    b = document.createElement("DIV");
-                    /*make the matching letters bold:*/
-                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-                    b.innerHTML += arr[i].substr(val.length);
-                    /*insert a input field that will hold the current array item's value:*/
-                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                    /*execute a function when someone clicks on the item value (DIV element):*/
-                    b.addEventListener("click", function(e) {
-                        /*insert the value for the autocomplete text field:*/
-                        inp.value = this.getElementsByTagName("input")[0].value;
-                        /*close the list of autocompleted values,
-                        (or any other open lists of autocompleted values:*/
-                        closeAllLists();
-                    });
-                    a.appendChild(b);
-                  }
-                }
-            });
-            inp.addEventListener("keydown", function(e) {
-                var x = document.getElementById(this.id + "autocomplete-list");
-                if (x) x = x.getElementsByTagName("div");
-                if (e.keyCode == 40) {
-                  /*If the arrow DOWN key is pressed,
-                  increase the currentFocus variable:*/
-                  currentFocus++;
-                  /*and and make the current item more visible:*/
-                  addActive(x);
-                } else if (e.keyCode == 38) { //up
-                  /*If the arrow UP key is pressed,
-                  decrease the currentFocus variable:*/
-                  currentFocus--;
-                  /*and and make the current item more visible:*/
-                  addActive(x);
-                } else if (e.keyCode == 13) {
-                  /*If the ENTER key is pressed, prevent the form from being submitted,*/
-                  e.preventDefault();
-                  if (currentFocus > -1) {
-                    /*and simulate a click on the "active" item:*/
-                    if (x) x[currentFocus].click();
-                  }
-                }
-            });
-            function addActive(x) {
-              /*a function to classify an item as "active":*/
-              if (!x) return false;
-              /*start by removing the "active" class on all items:*/
-              removeActive(x);
-              if (currentFocus >= x.length) currentFocus = 0;
-              if (currentFocus < 0) currentFocus = (x.length - 1);
-              /*add class "autocomplete-active":*/
-              x[currentFocus].classList.add("autocomplete-active");
-            }
-            function removeActive(x) {
-              /*a function to remove the "active" class from all autocomplete items:*/
-              for (var i = 0; i < x.length; i++) {
-                x[i].classList.remove("autocomplete-active");
-              }
-            }
-            function closeAllLists(elmnt) {
-              /*close all autocomplete lists in the document,
-              except the one passed as an argument:*/
-              var x = document.getElementsByClassName("autocomplete-items");
-              for (var i = 0; i < x.length; i++) {
-                if (elmnt != x[i] && elmnt != inp) {
-                  x[i].parentNode.removeChild(x[i]);
-                }
-              }
-            }
-            /*execute a function when someone clicks in the document:*/
-            document.addEventListener("click", function (e) {
-                closeAllLists(e.target);
-            });
-          }
-          
-          autocomplete(document.getElementById('playerName'), namesArray);
-          function sortdata(arr){
-            console.log(arr);
-            namesArray.length = 0;
-            if (arr && arr.data && arr.data.length > 0) {
-                for(let i = 0;i<arr.data.length;i++){
-                    const player = arr.data[i]; // Assuming there is only one player in the array
-              
-                    // Extracting full name
-                    const fullName = `${player.first_name} ${player.last_name}`.trim();
-                    console.log(fullName)
-                    namesArray.push(fullName);
-                }
-                console.log(namesArray)
-              
-              } else {
-                console.error('Data is undefined, null, or empty.');
-              }
-          }
-        async function searchPlayer() {
-            var playerName = document.getElementById('playerName').value;
-
+        async function fetchPlayerStats(playerId) {
             try {
-                // Make a Fetch API request to your backend
-                const response = await fetch(`http://localhost:8062/api/players?search=${playerName}`);
-
+                const response = await fetch(`http://localhost:8062/api/nba/playerseason?player_ids=${playerId}`);
+                
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Failed to fetch player stats');
                 }
-
-                const playerData = await response.json();
-
-                // Display the player data
-                displayPlayerData(playerData);
-
-                // If player is found, fetch and display player stats
-                if (playerData.data.length > 0) {
-                    const playerId = playerData.data[0].id;
-                    fetchPlayerStats(playerId);
+                
+                const data = await response.json();
+                
+                if (data && data.data && data.data.length > 0) {
+                    displayPlayerStats(data);
+                } else {
+                    throw new Error('Invalid response from server');
                 }
             } catch (error) {
-                console.error('Error fetching player data:', error.message);
+                console.error('Error fetching player stats:', error);
             }
         }
 
+        function renderPerformanceGraph(stats) {
+    // Clear the old chart if it exists
+    if (window.performanceChart) {
+        window.performanceChart.destroy();
+    }
+
+    const playerStats = stats.data[0];
+    
+    let minutesPlayed = playerStats.min;
+    if (minutesPlayed) {
+        const [hours, minutes] = minutesPlayed.split(':');
+        minutesPlayed = parseFloat(hours) + parseFloat(minutes) / 60;
+    }
+
+    const fieldGoalsMade = playerStats.fgm;
+    const fieldGoalsAttempted = playerStats.fga;
+    const rebounds = playerStats.reb;
+    const points = playerStats.pts;
+    const assists = playerStats.ast;
+    const blocks = playerStats.blk;
+    const steals = playerStats.stl;
+
+    const performanceData = {
+        labels: ['Minutes Played', 'Field Goals Made', 'Field Goals Attempted', 'Rebounds', 'Points', 'Assists', 'Blocks', 'Steals'],
+        datasets: [{
+            label: 'Player Performance',
+            data: [minutesPlayed, fieldGoalsMade, fieldGoalsAttempted, rebounds, points, assists, blocks, steals],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+        }]
+    };
+
+    const performanceOptions = {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
+
+    const performanceChartCanvas = document.getElementById('performanceGraph');
+    window.performanceChart = new Chart(performanceChartCanvas, {
+        type: 'bar',
+        data: performanceData,
+        options: performanceOptions
+    });
+}
+
+
+
+        function displayPlayerStats(stats) {
+            // Display player stats in the table
+            // Example: Display minutes played
+            document.getElementById('statsTable').innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Minutes Played</th>
+                        <th>Field Goals Made</th>
+                        <th>Field Goals Attempted</th>
+                        <th>Rebounds</th>
+                        <th>Points</th>
+                        <th>Assists</th>
+                        <th>Blocks</th>
+                        <th>Steals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${stats.data[0].min || 'N/A'}</td>
+                        <td>${stats.data[0].fgm || 'N/A'}</td>
+                        <td>${stats.data[0].fga || 'N/A'}</td>
+                        <td>${stats.data[0].reb || 'N/A'}</td>
+                        <td>${stats.data[0].pts || 'N/A'}</td>
+                        <td>${stats.data[0].ast || 'N/A'}</td>
+                        <td>${stats.data[0].blk || 'N/A'}</td>
+                        <td>${stats.data[0].stl || 'N/A'}</td>
+                    </tr>
+                </tbody>
+            `;
+
+            // Render the performance graph
+            renderPerformanceGraph(stats);
+        }
+
+        // Call this function after displaying player stats
+        async function searchPlayer() {
+    var playerName = document.getElementById('playerName').value;
+    var [firstName, lastName] = playerName.split(" ");
+
+    try {
+        const response = await fetch(`http://localhost:8062/api/players?firstName=${firstName}&lastName=${lastName}`);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const playerData = await response.json();
+
+        displayPlayerData(playerData);
+
+        if (playerData.data.length > 0) {
+            const playerId = playerData.data[0].id;
+            fetchPlayerStats(playerId);
+        }
+    } catch (error) {
+        console.error('Error fetching player data:', error.message);
+    }
+}
+
         function displayPlayerData(playerData) {
+            // Display player information
             var playerInfoSection = document.querySelector('section:nth-of-type(1)');
             var playerNameElement = playerInfoSection.querySelector('p:nth-of-type(1)');
 
@@ -382,134 +348,6 @@ layout: header
                 playerNameElement.innerHTML = 'Player Name: Not Found<br>Team: Not Found<br>Position: Not Found';
             }
         }
-
-        function fetchPlayerStats(playerId) {
-            const apiUrl = `http://localhost:8062/api/player/${playerId}`;
-
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    // Display the player stats
-                    displayPlayerStats(data);
-                })
-                .catch(error => {
-                    console.error("Error fetching player stats:", error);
-                });
-        }
-
-        // Function to destroy the existing chart instance
-        function destroyChart() {
-            var performanceCanvas = document.getElementById('performanceGraph');
-            var existingChart = Chart.getChart(performanceCanvas);
-
-            if (existingChart) {
-                existingChart.destroy();
-            }
-        }
-
-        // Function to render the performance graph using Chart.js
-        function renderPerformanceGraph(stats) {
-            // Destroy existing chart before rendering a new one
-            destroyChart();
-            console.log((stats.data[0].min || 0))
-            let timeString = (stats.data[0].min || 0);
-            let parts = timeString.split(":");
-            let wholeNumberPart = parseInt(parts[0]);
-            let fractionalPart = parseInt(parts[1]) / 60;
-            console.log(fractionalPart)
-            fractionalPart = Math.round(fractionalPart*100);
-            
-            console.log(fractionalPart)
-            let result = wholeNumberPart +"."+ fractionalPart;
-            console.log(result);
-            var performanceCanvas = document.getElementById('performanceGraph');
-            var performanceData = {
-                labels: ["Games Played", "Minutes", "Field Goals Made", "Field Goals Attempted", "Rebounds", "Assists", "Blocks", "Steals"],
-                datasets: [{
-                    label: 'Player Performance',
-                    data: [
-                        stats.data[0].games_played || 0,
-                        result || 0,
-                        stats.data[0].fgm || 0,
-                        stats.data[0].fga || 0,
-                        stats.data[0].reb || 0,
-                        stats.data[0].ast || 0,
-                        stats.data[0].blk || 0,
-                        stats.data[0].stl || 0,
-                    ],
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                }]
-            };
-
-            var performanceOptions = {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            };
-
-            var performanceChart = new Chart(performanceCanvas, {
-                type: 'bar',
-                data: performanceData,
-                options: performanceOptions
-            });
-        }
-
-        // Call this function after displaying player stats
-        
-        function displayPlayerStats(stats) {
-    var statsTable = document.getElementById('statsTable');
-
-    if (stats.data.length > 0) {
-        const playerStats = stats.data[0];
-
-        // Assuming your statistics object has properties corresponding to the table headers
-        var tableHtml = `
-            <thead>
-                <tr>
-                    <th>Games Played</th>
-                    <th>Minutes</th>
-                    <th>Field Goals Made</th>
-                    <th>Field Goals Attempted</th>
-                    <th>Rebounds</th>
-                    <th>Assists</th>
-                    <th>Blocks</th>
-                    <th>Steals</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>${playerStats.games_played || 'N/A'}</td>
-                    <td>${playerStats.min || 'N/A'}</td>
-                    <td>${playerStats.fgm || 'N/A'}</td>
-                    <td>${playerStats.fga || 'N/A'}</td>
-                    <td>${playerStats.reb || 'N/A'}</td>
-                    <td>${playerStats.ast || 'N/A'}</td>
-                    <td>${playerStats.blk || 'N/A'}</td>
-                    <td>${playerStats.stl || 'N/A'}</td>
-                </tr>
-            </tbody>
-        `;
-
-        // Replace the existing content of the statsTable with the updated tableHtml
-        statsTable.innerHTML = tableHtml;
-
-        // Render the performance graph
-        renderPerformanceGraph(stats);
-    } else {
-        // Handle the case where no stats are available
-        statsTable.innerHTML = '<p>No stats available</p>';
-
-        // Destroy the chart if it exists
-        destroyChart();
-    }
-}
-
     </script>
-
 </body>
-
 </html>
