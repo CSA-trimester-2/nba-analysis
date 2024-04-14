@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Player Stats</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .stats-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NBA Player Stats</h1>
+        <div class="stats-container">
+            <label for="playerId">Enter Player ID:</label>
+            <input type="text" id="playerId">
+            <button onclick="getPlayerStats()">Get Stats</button>
+        </div>
+        <div id="stats"></div>
+    </div>
+
+    <script>
+        function getPlayerStats() {
+            const playerId = document.getElementById('playerId').value;
+            const apiUrl = `http://localhost:8062/api/stats/${playerId}`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayStats(data);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+
+        function displayStats(stats) {
+            const statsContainer = document.getElementById('stats');
+            statsContainer.innerHTML = '';
+
+            const statsList = document.createElement('ul');
+
+            stats.forEach(stat => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${stat.player_name}: ${stat.pts} points, ${stat.reb} rebounds, ${stat.ast} assists`;
+                statsList.appendChild(listItem);
+            });
+
+            statsContainer.appendChild(statsList);
+        }
+    </script>
+</body>
+</html>
