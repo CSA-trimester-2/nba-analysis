@@ -316,8 +316,9 @@
             }
         }
 
-        async function placeBet(gameName, betAmount) {
-            betAmount = parseFloat(betAmount);
+        async function placeBet(gameName) {
+            const betAmountInput = prompt(`Enter the bet amount for ${gameName}:`);
+            const betAmount = parseFloat(betAmountInput);
             if (isNaN(betAmount) || betAmount <= 0) {
                 alert('Invalid bet amount');
                 return;
@@ -352,6 +353,8 @@
                 }
             }
         }
+        
+        
         
         
                 
