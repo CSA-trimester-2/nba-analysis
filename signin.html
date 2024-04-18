@@ -32,15 +32,15 @@ layout: header
     </section>
 
     <script>
-        const login_url = "http://localhost:8062/authenticate";
+        const login_url = "http://localhost:6942/authenticate";
         // prepare URL
         //var url = "https://spring.nighthawkcodingsociety.com/api/person/";
         // Uncomment next line for localhost testing
-        const read_url = "http://localhost:8062/api/person/";
+        const read_url = "http://localhost:6942/api/person/";
         //var url = "https://spring.nighthawkcodingsociety.com/api/person/";
         // Uncomment next line for localhost testing
-        const post_url = "http://localhost:8062/api/person/post";
-        const put_url = "http://localhost:8062/api/person/update";
+        const post_url = "http://localhost:6942/api/person/post";
+        const put_url = "http://localhost:6942/api/person/update";
         let currentField = "emailField";
 
         // //
@@ -99,20 +99,17 @@ layout: header
             }
 
             // Set Headers to support cross-origin
-            const authBody = {
+            const data = {
                 email: emailInput.value,
                 password: passwordInput.value
             };
 
             const authOptions = {
                 method: 'POST',
-                mode: 'cors',
-                cache: 'no-cache',
-                credentials: 'include',
-                body: JSON.stringify(authBody),
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify(data),
             };
         // new code begin
             // Fetch JWT 
