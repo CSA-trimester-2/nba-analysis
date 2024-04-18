@@ -109,7 +109,7 @@ layout: header
         async function displayPlayerStats() {
             const playerId = document.getElementById("player-id").value;
             const season = document.getElementById("season").value;
-            
+
             if (!playerId || !season) {
                 alert("Please enter both player ID and season.");
                 return;
@@ -119,9 +119,19 @@ layout: header
             const tableBody = document.querySelector("#stats-table tbody");
             tableBody.innerHTML = "";
 
-            stats.forEach(stat => {
+            // Function to fetch team details by ID
+            async function fetchTeamName(teamId) {
+    const response = await fetch(`http://localhost:8062/teams/${teamId}`);
+    const data = await response.json();
+    return data.data.full_name;
+}
+
+
+            // Loop through each stat and display the details in the table
+            for (const stat of stats) {
                 const date = new Date(stat.game.date).toLocaleDateString();
-                const opponent = stat.game.visitor_team_id === stat.team.id ? stat.game.home_team_id : stat.game.visitor_team_id;
+                const opponentId = stat.game.visitor_team_id === stat.team.id ? stat.game.home_team_id : stat.game.visitor_team_id;
+                const opponentName = await fetchTeamName(opponentId);
                 const points = stat.pts;
                 const rebounds = stat.reb;
                 const assists = stat.ast;
@@ -131,7 +141,7 @@ layout: header
                 const row = `
                     <tr>
                         <td>${date}</td>
-                        <td>${opponent}</td>
+                        <td>${opponentName}</td>
                         <td>${points}</td>
                         <td>${rebounds}</td>
                         <td>${assists}</td>
@@ -140,7 +150,8 @@ layout: header
                     </tr>
                 `;
                 tableBody.innerHTML += row;
-            });
+            }
         }
     </script>
 </body>
+</html>
