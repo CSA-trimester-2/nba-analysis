@@ -259,9 +259,56 @@
     <button class="resetButton" id="Reset" onclick="reset()">Reset</button>
     <br>
     <canvas id="Board" left="10%" width="700px" height="700px" style="border:3px solid #548BC2;" onmousemove="coordinate(event)" onmousedown="mousedown()" onmouseup="mouseup()"></canvas>
-        <button id="saveButton" onclick="saveDrawing()">Save</button>
+    <br>
+    <label for="fileInput" style="color:white">Choose image file to see preview</label>
+    <input type="file" id="fileInput" accept="image/*" multiple>
+    <div id="preview"></div>    
+    <button id="saveButton" onclick="saveDrawing()">Save</button>
     </div>
+    <script>//photo stuff
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            var files = event.target.files;
+            var preview = document.getElementById('preview');
+            
+            // Clear any existing content
+            preview.innerHTML = '';
+        
+            // Loop through all selected files
+            for (var i = 0; i < files.length; i++) {
+              var file = files[i];
+        
+              // Only process image files
+              if (!file.type.match('image.*')) {
+                continue;
+              }
+        
+              var img = document.createElement('img');
+              img.src = URL.createObjectURL(file);
+              img.style.height = '50px';
+              img.style.display = 'block'; // Ensure the image is displayed in a block to put it on a new line
+              img.style.marginBottom = '10px';
+              var b = document.getElementById("Board");
+              var ctx = b.getContext("2d");
+              const imge = new Image();
+                imge.onload = () => {
+                    var scaleFactor = Math.min(700 / imge.width, 700 / imge.height);
+                    var newWidth = imge.width * scaleFactor;
+                    var newHeight = imge.height * scaleFactor;
 
+                    // Calculate the center position of the canvas
+                    var x = (700 - newWidth) / 2;
+                    var y = (700 - newHeight) / 2;
+
+                    // Draw the image
+                    
+                    ctx.clearRect(0, 0, ctx.width, ctx.height)
+                    ctx.drawImage(imge, x, y, newWidth, newHeight);
+                    ctx.stroke();
+                };
+                imge.src = img.src;
+            }
+          });
+    </script>
 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script>
