@@ -26,6 +26,7 @@
         try {
             const response = await fetch(url);
             const data = await response.json();
+            console.log((data))
             displayGames(parseData(data));
             
         } catch (error) {
@@ -39,7 +40,8 @@
             const team2 = game.away_team;
             const oddsTeam1 = game.bookmakers[0].markets[0].outcomes[0].price;
             const oddsTeam2 = game.bookmakers[0].markets[0].outcomes[1].price;
-            return [`${team1} vs ${team2}`, oddsTeam1, oddsTeam2];
+            const date = game.commence_time;
+            return [`${team1} vs ${team2}`, oddsTeam1, oddsTeam2, date];
         });
         return formattedData;
     }
@@ -50,9 +52,34 @@
         formattedData.forEach(game => {
             const gameDiv = document.createElement('div');
             gameDiv.className = 'game-div';
-            gameDiv.innerHTML = `<div>${game[0]}</div><button>${game[1]}</button><button>${game[2]}</button>`;
+            const teams = game[0].split(" vs ");
+            gameDiv.innerHTML = `<div>${game[0]}</div><button class="teamButton" data-game="${game[0]}" data-team="${teams[0]}" data-odd="${game[1]}" data-date="${game[3]}">${game[1]}</button><button class="teamButton" data-game="${game[0]}" data-team="${teams[1]}" data-odd="${game[2]}" data-date="${game[3]}">${game[2]}</button>`;
             gamesContainer.appendChild(gameDiv);
         });
+    
+        // Add event listener to all buttons with class 'teamButton'
+        const teamButtons = document.querySelectorAll('.teamButton');
+        teamButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const gameName = button.getAttribute('data-game');
+                const teamPicked = button.getAttribute('data-team');
+                const odd = button.getAttribute('data-odd');
+                const dateBefore = button.getAttribute('data-date')
+                const date = dateBefore.substring(0,10)
+                const betAmount = prompt(`Enter the amount to bet on ${teamPicked}:`);
+                if (betAmount !== null && !isNaN(parseFloat(betAmount))) {
+                    storeDataLocal(gameName, teamPicked, odd, date, parseFloat(betAmount));
+                }
+            });
+        });
+    }
+    
+    function storeDataLocal(gameName, teamPicked, odd, date, cash) {
+        console.log("Game Name:", gameName);
+        console.log("Team Picked:", teamPicked);
+        console.log("Odd:", odd);
+        console.log("Date:", date);
+        console.log("Cash:", cash);
     }
 </script>
 </html>
